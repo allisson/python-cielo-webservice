@@ -5,6 +5,7 @@ import cielo_webservice
 requires = [
     'requests',
     'jinja2',
+    'six'
 ]
 
 testing_extras = [
