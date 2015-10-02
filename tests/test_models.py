@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 
 from cielo_webservice.models import (
-    Comercial, Cartao, Pedido, Pagamento, Transacao
+    Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Transacao
 )
 
 
@@ -206,6 +206,134 @@ class TestPagamento(TestCase):
         )
 
 
+class TestAutenticacao(TestCase):
+
+    def test_validate(self):
+        with self.assertRaises(TypeError) as context:
+            Autenticacao(
+                codigo='1', mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, eci=7
+            )
+
+        self.assertIn(
+            'codigo precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autenticacao(
+                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
+                valor=10000, eci=7
+            )
+
+        self.assertIn(
+            'mensagem precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autenticacao(
+                codigo=1, mensagem='msg', data_hora=201112,
+                valor=10000, eci=7
+            )
+
+        self.assertIn(
+            'data_hora precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autenticacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor='10000', eci=7
+            )
+
+        self.assertIn(
+            'valor precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autenticacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, eci='7'
+            )
+
+        self.assertIn(
+            'eci precisa ser do tipo inteiro.', context.exception
+        )
+
+
+class TestAutorizacao(TestCase):
+
+    def test_validate(self):
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo='1', mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, lr=1, arp=1, nsu=1
+            )
+
+        self.assertIn(
+            'codigo precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
+                valor=10000, lr=1, arp=1, nsu=1
+            )
+
+        self.assertIn(
+            'mensagem precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem='msg', data_hora=201112,
+                valor=10000, lr=1, arp=1, nsu=1
+            )
+
+        self.assertIn(
+            'data_hora precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor='10000', lr=1, arp=1, nsu=1
+            )
+
+        self.assertIn(
+            'valor precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, lr='1', arp=1, nsu=1
+            )
+
+        self.assertIn(
+            'lr precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, lr=1, arp='1', nsu=1
+            )
+
+        self.assertIn(
+            'arp precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Autorizacao(
+                codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+                valor=10000, lr=1, arp=1, nsu='1'
+            )
+
+        self.assertIn(
+            'nsu precisa ser do tipo inteiro.', context.exception
+        )
+
+
 class TestTransacao(TestCase):
 
     def test_validate(self):
@@ -219,6 +347,14 @@ class TestTransacao(TestCase):
             data_hora='2011-12-07T11:43:37',
         )
         pagamento = Pagamento(bandeira='visa', produto='1', parcelas=1)
+        autenticacao = Autenticacao(
+            codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+            valor=10000, eci=7
+        )
+        autorizacao = Autorizacao(
+            codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
+            valor=10000, lr=1, arp=1, nsu=1
+        )
 
         with self.assertRaises(TypeError) as context:
             Transacao(
@@ -328,4 +464,66 @@ class TestTransacao(TestCase):
 
         self.assertIn(
             'avs precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, autenticacao=1, autorizacao=autorizacao
+            )
+
+        self.assertIn(
+            'autenticacao precisa ser do tipo Autenticacao.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, autenticacao=autenticacao, autorizacao=1
+            )
+
+        self.assertIn(
+            'autorizacao precisa ser do tipo Autorizacao.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid=1, pan='pan', status=1
+            )
+
+        self.assertIn(
+            'tid precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid='1', pan=1, status=1
+            )
+
+        self.assertIn(
+            'pan precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid='1', pan='pan', status='1',
+                url_autenticacao='http://google.com'
+            )
+
+        self.assertIn(
+            'status precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid='1', pan='pan', status=1,
+                url_autenticacao=1
+            )
+
+        self.assertIn(
+            'url_autenticacao precisa ser do tipo string.', context.exception
         )

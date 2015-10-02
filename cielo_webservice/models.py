@@ -115,11 +115,77 @@ class Pagamento(object):
             raise TypeError('parcelas precisa ser do tipo inteiro.')
 
 
+class Autenticacao(object):
+
+    def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
+                 eci=None):
+        self.codigo = codigo
+        self.mensagem = mensagem
+        self.data_hora = data_hora
+        self.valor = valor
+        self.eci = eci
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.codigo, six.integer_types):
+            raise TypeError('codigo precisa ser do tipo inteiro.')
+
+        if not isinstance(self.mensagem, six.string_types):
+            raise TypeError('mensagem precisa ser do tipo string.')
+
+        if not isinstance(self.data_hora, six.string_types):
+            raise TypeError('data_hora precisa ser do tipo string.')
+
+        if not isinstance(self.valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
+
+        if not isinstance(self.eci, six.integer_types):
+            raise TypeError('eci precisa ser do tipo inteiro.')
+
+
+class Autorizacao(object):
+
+    def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
+                 lr=None, arp=None, nsu=None):
+        self.codigo = codigo
+        self.mensagem = mensagem
+        self.data_hora = data_hora
+        self.valor = valor
+        self.lr = lr
+        self.arp = arp
+        self.nsu = nsu
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.codigo, six.integer_types):
+            raise TypeError('codigo precisa ser do tipo inteiro.')
+
+        if not isinstance(self.mensagem, six.string_types):
+            raise TypeError('mensagem precisa ser do tipo string.')
+
+        if not isinstance(self.data_hora, six.string_types):
+            raise TypeError('data_hora precisa ser do tipo string.')
+
+        if not isinstance(self.valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
+
+        if not isinstance(self.lr, six.integer_types):
+            raise TypeError('lr precisa ser do tipo inteiro.')
+
+        if not isinstance(self.arp, six.integer_types):
+            raise TypeError('arp precisa ser do tipo inteiro.')
+
+        if not isinstance(self.nsu, six.integer_types):
+            raise TypeError('nsu precisa ser do tipo inteiro.')
+
+
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
                  pagamento=None, url_retorno=None, autorizar=3, capturar=True,
-                 campo_livre=None, bin=None, gerar_token=False, avs=None):
+                 campo_livre=None, bin=None, gerar_token=False, avs=None,
+                 autenticacao=None, autorizacao=None, tid=None, pan=None,
+                 status=None, url_autenticacao=None):
         self.comercial = comercial
         self.cartao = cartao
         self.pedido = pedido
@@ -131,6 +197,12 @@ class Transacao(object):
         self.bin = bin
         self.gerar_token = gerar_token
         self.avs = avs
+        self.autenticacao = autenticacao
+        self.autorizacao = autorizacao
+        self.tid = tid
+        self.pan = pan
+        self.status = status
+        self.url_autenticacao = url_autenticacao
         self.validate()
 
     def validate(self):
@@ -166,3 +238,21 @@ class Transacao(object):
 
         if self.avs and not isinstance(self.avs, six.string_types):
             raise TypeError('avs precisa ser do tipo string.')
+
+        if self.autenticacao and not isinstance(self.autenticacao, Autenticacao):
+            raise TypeError('autenticacao precisa ser do tipo Autenticacao.')
+
+        if self.autorizacao and not isinstance(self.autorizacao, Autorizacao):
+            raise TypeError('autorizacao precisa ser do tipo Autorizacao.')
+
+        if self.tid and not isinstance(self.tid, six.string_types):
+            raise TypeError('tid precisa ser do tipo string.')
+
+        if self.pan and not isinstance(self.pan, six.string_types):
+            raise TypeError('pan precisa ser do tipo string.')
+
+        if self.status and not isinstance(self.status, six.integer_types):
+            raise TypeError('status precisa ser do tipo inteiro.')
+
+        if self.url_autenticacao and not isinstance(self.url_autenticacao, six.string_types):
+            raise TypeError('url_autenticacao precisa ser do tipo string.')
