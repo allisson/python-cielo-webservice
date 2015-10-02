@@ -94,3 +94,75 @@ class Pedido(object):
 
         if self.soft_descriptor and not isinstance(self.soft_descriptor, six.string_types):
             raise TypeError('soft_descriptor precisa ser do tipo string.')
+
+
+class Pagamento(object):
+
+    def __init__(self, bandeira=None, produto=None, parcelas=None):
+        self.bandeira = bandeira
+        self.produto = produto
+        self.parcelas = parcelas
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.bandeira, six.string_types):
+            raise TypeError('bandeira precisa ser do tipo string.')
+
+        if not isinstance(self.produto, six.string_types):
+            raise TypeError('produto precisa ser do tipo string.')
+
+        if not isinstance(self.parcelas, six.integer_types):
+            raise TypeError('parcelas precisa ser do tipo inteiro.')
+
+
+class Transacao(object):
+
+    def __init__(self, comercial=None, cartao=None, pedido=None,
+                 pagamento=None, url_retorno=None, autorizar=3, capturar=True,
+                 campo_livre=None, bin=None, gerar_token=False, avs=None):
+        self.comercial = comercial
+        self.cartao = cartao
+        self.pedido = pedido
+        self.pagamento = pagamento
+        self.url_retorno = url_retorno
+        self.autorizar = autorizar
+        self.capturar = capturar
+        self.campo_livre = campo_livre
+        self.bin = bin
+        self.gerar_token = gerar_token
+        self.avs = avs
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.comercial, Comercial):
+            raise TypeError('comercial precisa ser do tipo Comercial.')
+
+        if not isinstance(self.cartao, Cartao):
+            raise TypeError('cartao precisa ser do tipo Cartao.')
+
+        if not isinstance(self.pedido, Pedido):
+            raise TypeError('pedido precisa ser do tipo Pedido.')
+
+        if not isinstance(self.pagamento, Pagamento):
+            raise TypeError('pagamento precisa ser do tipo Pagamento.')
+
+        if not isinstance(self.autorizar, six.integer_types):
+            raise TypeError('autorizar precisa ser do tipo inteiro.')
+
+        if self.autorizar == 1 and not isinstance(self.url_retorno, six.string_types):
+            raise TypeError('url_retorno precisa ser do tipo string.')
+
+        if not isinstance(self.capturar, bool):
+            raise TypeError('capturar precisa ser do tipo booleano.')
+
+        if self.campo_livre and not isinstance(self.campo_livre, six.string_types):
+            raise TypeError('campo_livre precisa ser do tipo string.')
+
+        if self.bin and not isinstance(self.bin, six.integer_types):
+            raise TypeError('bin precisa ser do tipo inteiro.')
+
+        if not isinstance(self.gerar_token, bool):
+            raise TypeError('gerar_token precisa ser do tipo booleano.')
+
+        if self.avs and not isinstance(self.avs, six.string_types):
+            raise TypeError('avs precisa ser do tipo string.')
