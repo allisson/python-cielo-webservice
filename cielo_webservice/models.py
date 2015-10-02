@@ -179,13 +179,32 @@ class Autorizacao(object):
             raise TypeError('nsu precisa ser do tipo inteiro.')
 
 
+class Token(object):
+
+    def __init__(self, code=None, status=None, numero=None):
+        self.code = code
+        self.status = status
+        self.numero = numero
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.code, six.string_types):
+            raise TypeError('code precisa ser do tipo string.')
+
+        if not isinstance(self.status, six.integer_types):
+            raise TypeError('status precisa ser do tipo inteiro.')
+
+        if not isinstance(self.numero, six.string_types):
+            raise TypeError('numero precisa ser do tipo string.')
+
+
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
                  pagamento=None, url_retorno=None, autorizar=3, capturar=True,
                  campo_livre=None, bin=None, gerar_token=False, avs=None,
-                 autenticacao=None, autorizacao=None, tid=None, pan=None,
-                 status=None, url_autenticacao=None):
+                 autenticacao=None, autorizacao=None, token=None, tid=None,
+                 pan=None, status=None, url_autenticacao=None):
         self.comercial = comercial
         self.cartao = cartao
         self.pedido = pedido
@@ -199,6 +218,7 @@ class Transacao(object):
         self.avs = avs
         self.autenticacao = autenticacao
         self.autorizacao = autorizacao
+        self.token = token
         self.tid = tid
         self.pan = pan
         self.status = status
@@ -244,6 +264,9 @@ class Transacao(object):
 
         if self.autorizacao and not isinstance(self.autorizacao, Autorizacao):
             raise TypeError('autorizacao precisa ser do tipo Autorizacao.')
+
+        if self.token and not isinstance(self.token, Token):
+            raise TypeError('token precisa ser do tipo Token.')
 
         if self.tid and not isinstance(self.tid, six.string_types):
             raise TypeError('tid precisa ser do tipo string.')

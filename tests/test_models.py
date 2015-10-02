@@ -3,7 +3,8 @@ from __future__ import unicode_literals
 from unittest import TestCase
 
 from cielo_webservice.models import (
-    Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Transacao
+    Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
+    Transacao
 )
 
 
@@ -334,6 +335,31 @@ class TestAutorizacao(TestCase):
         )
 
 
+class TestToken(TestCase):
+
+    def test_validate(self):
+        with self.assertRaises(TypeError) as context:
+            Token(code=1, status=1, numero='1234')
+
+        self.assertIn(
+            'code precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Token(code='code', status='1', numero='1234')
+
+        self.assertIn(
+            'status precisa ser do tipo inteiro.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Token(code='code', status=1, numero=1234)
+
+        self.assertIn(
+            'numero precisa ser do tipo string.', context.exception
+        )
+
+
 class TestTransacao(TestCase):
 
     def test_validate(self):
@@ -355,6 +381,7 @@ class TestTransacao(TestCase):
             codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
             valor=10000, lr=1, arp=1, nsu=1
         )
+        token = Token(code='code', status=1, numero='1234')
 
         with self.assertRaises(TypeError) as context:
             Transacao(
@@ -521,9 +548,19 @@ class TestTransacao(TestCase):
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, tid='1', pan='pan', status=1,
-                url_autenticacao=1
+                url_autenticacao=1, token=token
             )
 
         self.assertIn(
             'url_autenticacao precisa ser do tipo string.', context.exception
+        )
+
+        with self.assertRaises(TypeError) as context:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid='1', pan='pan', status=1, token=1
+            )
+
+        self.assertIn(
+            'token precisa ser do tipo Token.', context.exception
         )
