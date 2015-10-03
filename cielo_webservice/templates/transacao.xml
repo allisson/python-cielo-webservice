@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<requisicao-transacao id="a97ab62a-7956-41ea-b03f-c2e9f612c293" versao="1.2.1">
+  {% if transacao.comercial %}
+  <dados-ec>
+    <numero>{{ transacao.comercial.numero}}</numero>
+    <chave>{{ transacao.comercial.chave }}</chave>
+  </dados-ec>
+  {% endif %}
+  {% if transacao.cartao %}
+  <dados-portador>
+    {% if transacao.cartao.token %}
+    <token>{{ transacao.cartao.token }}</token>
+    {% else %}
+    <numero>{{ transacao.cartao.numero }}</numero>
+    <validade>{{ transacao.cartao.validade }}</validade>
+    <indicador>{{ transacao.cartao.indicador }}</indicador>
+    <codigo-seguranca>{{ transacao.cartao.codigo_seguranca }}</codigo-seguranca>
+    {% endif %}
+  </dados-portador>
+  {% endif %}
+  {% if transacao.pedido %}
+  <dados-pedido>
+    <numero>{{ transacao.pedido.numero }}</numero>
+    <valor>{{ transacao.pedido.valor }}</valor>
+    <moeda>{{ transacao.pedido.moeda }}</moeda>
+    <data-hora>{{ transacao.pedido.data_hora }}</data-hora>
+    {% if transacao.pedido.descricao %}
+    <descricao>{{ transacao.pedido.descricao }}</descricao>
+    {% endif %}
+    {% if transacao.pedido.idioma %}
+    <idioma>{{ transacao.pedido.idioma }}</idioma>
+    {% endif %}
+    {% if transacao.pedido.taxa_embarque %}
+    <taxa-embarque>{{ transacao.pedido.taxa_embarque }}</taxa-embarque>
+    {% endif %}
+    {% if transacao.pedido.soft_descriptor %}
+    <soft-descriptor>{{ transacao.pedido.soft_descriptor }}</soft-descriptor>
+    {% endif %}
+  </dados-pedido>
+  {% endif %}
+  {% if transacao.pagamento %}
+  <forma-pagamento>
+    <bandeira>{{ transacao.pagamento.bandeira }}</bandeira>
+    <produto>{{ transacao.pagamento.produto }}</produto>
+    <parcelas>{{ transacao.pagamento.parcelas }}</parcelas>
+  </forma-pagamento>
+  {% endif %}
+  {% if transacao.url_retorno %}
+  <url-retorno>{{ transacao.url_retorno }}</url-retorno>
+  {% endif %}
+  {% if transacao.autorizar %}
+  <autorizar>{{ transacao.autorizar }}</autorizar>
+  {% endif %}
+  {% if transacao.capturar %}
+  <capturar>false</capturar>
+  {% endif %}
+  {% if transacao.campo_livre %}
+  <campo-livre>{{ transacao.campo_livre }}</campo-livre>
+  {% endif %}
+  {% if transacao.bin %}
+  <bin>{{ transacao.bin }}</bin>
+  {% endif %}
+  {% if transacao.gerar_token %}
+  <gerar-token>{{ transacao.gerar_token }}</gerar-token>
+  {% endif %}
+  {% if transacao.avs %}
+  <avs>
+  <![CDATA[
+    <dados-avs>
+      <endereco>Rua Teste AVS</endereco>
+      <complemento>Casa</complemento>
+      <numero>123</numero>
+      <bairro>Vila AVS</bairro>
+      <cep>12345-123</cep>
+    </dados-avs>
+  ]]>
+  </avs>
+  {% endif %}
+</requisicao-transacao>

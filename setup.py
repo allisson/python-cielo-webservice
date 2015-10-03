@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Command
 import cielo_webservice
 
 requires = [
@@ -9,9 +9,25 @@ requires = [
 ]
 
 testing_extras = [
-    'nose',
-    'coverage',
+    'pytest',
+    'pytest-cov',
 ]
+
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import subprocess
+        import sys
+        errno = subprocess.call([sys.executable, 'runtests.py'])
+        raise SystemExit(errno)
 
 setup(
     name='python-cielo-webservice',
@@ -37,9 +53,9 @@ setup(
         'Programming Language :: Python :: 3.5',
         'License :: OSI Approved :: MIT License',
     ],
-    test_suite='nose.collector',
-    tests_require=['nose'],
+    tests_require=['pytest'],
     extras_require={
         'testing': testing_extras,
     },
+    cmdclass={'test': PyTest},
 )
