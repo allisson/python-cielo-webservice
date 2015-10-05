@@ -198,6 +198,62 @@ class Token(object):
             raise TypeError('numero precisa ser do tipo string.')
 
 
+class Avs(object):
+
+    def __init__(self, endereco=None, complemento=None, numero=None,
+                 bairro=None, cep=None):
+        self.endereco = endereco
+        self.complemento = complemento
+        self.numero = numero
+        self.bairro = bairro
+        self.cep = cep
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.endereco, six.string_types):
+            raise TypeError('endereco precisa ser do tipo string.')
+
+        if not isinstance(self.complemento, six.string_types):
+            raise TypeError('endereco precisa ser do tipo string.')
+
+        if not isinstance(self.numero, six.integer_types):
+            raise TypeError('numero precisa ser do tipo inteiro.')
+
+        if not isinstance(self.bairro, six.string_types):
+            raise TypeError('bairro precisa ser do tipo string.')
+
+        if not isinstance(self.cep, six.string_types):
+            raise TypeError('cep precisa ser do tipo string.')
+
+
+class Captura(object):
+
+    def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
+                 taxa_embarque=None):
+        self.codigo = codigo
+        self.mensagem = mensagem
+        self.data_hora = data_hora
+        self.valor = valor
+        self.taxa_embarque = taxa_embarque
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.codigo, six.integer_types):
+            raise TypeError('codigo precisa ser do tipo inteiro.')
+
+        if not isinstance(self.mensagem, six.string_types):
+            raise TypeError('mensagem precisa ser do tipo string.')
+
+        if not isinstance(self.data_hora, six.string_types):
+            raise TypeError('data_hora precisa ser do tipo string.')
+
+        if not isinstance(self.valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
+
+        if not isinstance(self.taxa_embarque, six.integer_types):
+            raise TypeError('taxa_embarque precisa ser do tipo inteiro.')
+
+
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
@@ -256,8 +312,8 @@ class Transacao(object):
         if not isinstance(self.gerar_token, bool):
             raise TypeError('gerar_token precisa ser do tipo booleano.')
 
-        if self.avs and not isinstance(self.avs, six.string_types):
-            raise TypeError('avs precisa ser do tipo string.')
+        if self.avs and not isinstance(self.avs, Avs):
+            raise TypeError('avs precisa ser do tipo Avs.')
 
         if self.autenticacao and not isinstance(self.autenticacao, Autenticacao):
             raise TypeError('autenticacao precisa ser do tipo Autenticacao.')

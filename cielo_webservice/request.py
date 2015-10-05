@@ -10,7 +10,6 @@ from cielo_webservice.models import Transacao
 
 BASE_URL = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do'
 SANDBOX_BASE_URL = 'https://qasecommerce.cielo.com.br/servicos/ecommwsec.do'
-# BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -43,7 +42,10 @@ class CieloRequest(object):
         xml = self.render_template(
             'transacao.xml', id=str(uuid.uuid4()), transacao=transacao
         )
+        print(xml)
         response = requests.post(self.base_url, data={'mensagem': xml})
+        print(response.text)
+        self.assertFalse(True)
 
     def capturar(self):
         pass

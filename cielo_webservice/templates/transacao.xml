@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<requisicao-transacao id="a97ab62a-7956-41ea-b03f-c2e9f612c293" versao="1.2.1">
+<requisicao-transacao id="{{ id }}" versao="1.2.1">
   {% if transacao.comercial %}
   <dados-ec>
     <numero>{{ transacao.comercial.numero}}</numero>
@@ -52,7 +52,7 @@
   <autorizar>{{ transacao.autorizar }}</autorizar>
   {% endif %}
   {% if transacao.capturar %}
-  <capturar>false</capturar>
+  <capturar>{{ transacao.capturar | lower }}</capturar>
   {% endif %}
   {% if transacao.campo_livre %}
   <campo-livre>{{ transacao.campo_livre }}</campo-livre>
@@ -61,17 +61,17 @@
   <bin>{{ transacao.bin }}</bin>
   {% endif %}
   {% if transacao.gerar_token %}
-  <gerar-token>{{ transacao.gerar_token }}</gerar-token>
+  <gerar-token>{{ transacao.gerar_token | lower }}</gerar-token>
   {% endif %}
   {% if transacao.avs %}
   <avs>
   <![CDATA[
     <dados-avs>
-      <endereco>Rua Teste AVS</endereco>
-      <complemento>Casa</complemento>
-      <numero>123</numero>
-      <bairro>Vila AVS</bairro>
-      <cep>12345-123</cep>
+      <endereco>{{ transacao.avs.endereco }}</endereco>
+      <complemento>{{ transacao.avs.complemento }}</complemento>
+      <numero>{{ transacao.avs.numero }}</numero>
+      <bairro>{{ transacao.avs.bairro }}</bairro>
+      <cep>{{ transacao.avs.cep }}</cep>
     </dados-avs>
   ]]>
   </avs>

@@ -5,7 +5,7 @@ import pytest
 
 from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
-    Transacao
+    Transacao, Avs, Captura
 )
 
 
@@ -255,6 +255,45 @@ class TestToken(TestCase):
             assert excinfo.value.message == 'numero precisa ser do tipo string.'
 
 
+class TestAvs(TestCase):
+
+    def test_validate(self):
+        with pytest.raises(TypeError) as excinfo:
+            Avs(
+                endereco=1, complemento='', numero=1, bairro='Bairro',
+                cep='00000-000'
+            )
+            assert excinfo.value.message == 'endereço precisa ser do tipo string.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Avs(
+                endereco='Rua 1', complemento=1, numero=1, bairro='Bairro',
+                cep='00000-000'
+            )
+            assert excinfo.value.message == 'complemento precisa ser do tipo string.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Avs(
+                endereco='Rua 1', complemento='', numero='1', bairro='Bairro',
+                cep='00000-000'
+            )
+            assert excinfo.value.message == 'numero precisa ser do tipo inteiro.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Avs(
+                endereco='Rua 1', complemento='', numero=1, bairro=1,
+                cep='00000-000'
+            )
+            assert excinfo.value.message == 'bairro precisa ser do tipo string.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Avs(
+                endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
+                cep=00000000
+            )
+            assert excinfo.value.message == 'cep precisa ser do tipo string.'
+
+
 class TestTransacao(TestCase):
 
     def test_validate(self):
@@ -277,6 +316,10 @@ class TestTransacao(TestCase):
             valor=10000, lr=1, arp=1, nsu=1
         )
         token = Token(code='code', status=1, numero='1234')
+        avs = Avs(
+            endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
+            cep='00000-000'
+        )
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -344,7 +387,7 @@ class TestTransacao(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
-                pagamento=pagamento, gerar_token='false'
+                pagamento=pagamento, gerar_token='false', avs=avs
             )
             assert excinfo.value.message == 'gerar_token precisa ser do tipo booleano.'
 
@@ -353,7 +396,7 @@ class TestTransacao(TestCase):
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, avs=1
             )
-            assert excinfo.value.message == 'avs precisa ser do tipo string.'
+            assert excinfo.value.message == 'avs precisa ser do tipo Avs.'
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -405,3 +448,42 @@ class TestTransacao(TestCase):
                 pagamento=pagamento, tid='1', pan='pan', status=1, token=1
             )
             assert excinfo.value.message == 'token precisa ser do tipo Token.'
+
+
+class TestCaptura(TestCase):
+
+    def test_validate(self):
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo='1', mensagem='mensagem',
+                data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
+            )
+            assert excinfo.value.message == 'codigo precisa ser do tipo inteiro.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
+                valor=10000, taxa_embarque=0
+            )
+            assert excinfo.value.message == 'mensagem precisa ser do tipo string.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora=1,
+                valor=10000, taxa_embarque=0
+            )
+            assert excinfo.value.message == 'data_hora precisa ser do tipo string.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+                valor='10000', taxa_embarque=0
+            )
+            assert excinfo.value.message == 'valor precisa ser do tipo inteiro.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+                valor=10000, taxa_embarque='0'
+            )
+            assert excinfo.value.message == 'taxa_embarque precisa ser do tipo inteiro.'
