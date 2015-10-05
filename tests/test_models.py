@@ -2,11 +2,15 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 import pytest
+import os
 
 from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
-    Transacao, Avs, Captura
+    Transacao, Avs, Captura, xml_to_object
 )
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestComercial(TestCase):
@@ -320,6 +324,10 @@ class TestTransacao(TestCase):
             endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
             cep='00000-000'
         )
+        captura = Captura(
+            codigo=1, mensagem='mensagem',
+            data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
+        )
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -408,9 +416,18 @@ class TestTransacao(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
-                pagamento=pagamento, autenticacao=autenticacao, autorizacao=1
+                pagamento=pagamento, autenticacao=autenticacao, autorizacao=1,
+                captura=captura
             )
             assert excinfo.value.message == 'autorizacao precisa ser do tipo Autorizacao.'
+
+        with pytest.raises(TypeError) as excinfo:
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, autenticacao=autenticacao,
+                autorizacao=autorizacao, captura=1
+            )
+            assert excinfo.value.message == 'captura precisa ser do tipo Captura.'
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -487,3 +504,40 @@ class TestCaptura(TestCase):
                 valor=10000, taxa_embarque='0'
             )
             assert excinfo.value.message == 'taxa_embarque precisa ser do tipo inteiro.'
+
+
+class TestXmlToObject(TestCase):
+
+    def test_autorizacao_direta(self):
+        transacao = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml1.xml')).read()
+        )
+        self.assertEqual(transacao.tid, '100699306948372E1001')
+        self.assertEqual(
+            transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
+        )
+        self.assertEqual(transacao.status, 6)
+        self.assertTrue(isinstance(transacao.pedido, Pedido))
+        self.assertTrue(isinstance(transacao.pagamento, Pagamento))
+        self.assertTrue(isinstance(transacao.autenticacao, Autenticacao))
+        self.assertTrue(isinstance(transacao.autorizacao, Autorizacao))
+        self.assertTrue(isinstance(transacao.captura, Captura))
+
+    def test_transacao_autenticada(self):
+        transacao = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml2.xml')).read()
+        )
+        self.assertEqual(transacao.tid, '1006993069483CE61001')
+        self.assertEqual(
+            transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
+        )
+        self.assertEqual(transacao.status, 0)
+        self.assertEqual(
+            transacao.url_autenticacao,
+            'https://qasecommerce.cielo.com.br/web/index.cbmp?id=5a3a7c089f5299f535dcdd1f502a38ba'
+        )
+        self.assertTrue(isinstance(transacao.pedido, Pedido))
+        self.assertTrue(isinstance(transacao.pagamento, Pagamento))
+        self.assertFalse(transacao.autenticacao)
+        self.assertFalse(transacao.autorizacao)
+        self.assertFalse(transacao.captura)

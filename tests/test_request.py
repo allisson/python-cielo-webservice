@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from unittest import TestCase, skip
+from datetime import datetime
 
 from cielo_webservice.request import CieloRequest
 from cielo_webservice.models import (
-    Comercial, Cartao, Pedido, Pagamento, Transacao
+    Comercial, Cartao, Pedido, Pagamento, Transacao, Avs
 )
 
 
 class TestCieloRequest(TestCase):
 
-    @skip('pass')
+    @skip('skip')
     def test_autorizar(self):
         comercial = Comercial(
             numero=1006993069,
@@ -22,12 +23,14 @@ class TestCieloRequest(TestCase):
         )
         pedido = Pedido(
             numero='1234', valor=10000, moeda=986,
-            data_hora='2011-12-07T11:43:37',
+            data_hora=datetime.now().isoformat(),
         )
         pagamento = Pagamento(bandeira='visa', produto='1', parcelas=1)
         transacao = Transacao(
             comercial=comercial, cartao=cartao, pedido=pedido,
-            pagamento=pagamento,
+            pagamento=pagamento, autorizar=3, capturar=False
         )
         request = CieloRequest(sandbox=True)
-        request.autorizar(transacao)
+        transacao = request.autorizar(transacao)
+        transacao = request.capturar(tid=transacao.tid, comercial=comercial)
+        self.assertTrue(False)

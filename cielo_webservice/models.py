@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import six
+import xmltodict
 
 
 class Comercial(object):
@@ -31,19 +32,19 @@ class Cartao(object):
         self.validate()
 
     def validate(self):
-        if self.numero and not isinstance(self.numero, six.integer_types):
+        if self.numero is not None and not isinstance(self.numero, six.integer_types):
             raise TypeError('numero precisa ser do tipo inteiro.')
 
-        if self.validade and not isinstance(self.validade, six.integer_types):
+        if self.validade is not None and not isinstance(self.validade, six.integer_types):
             raise TypeError('validade precisa ser do tipo inteiro.')
 
-        if self.indicador and not isinstance(self.indicador, six.integer_types):
+        if self.indicador is not None and not isinstance(self.indicador, six.integer_types):
             raise TypeError('indicador precisa ser do tipo inteiro.')
 
         if self.indicador == 1 and not isinstance(self.codigo_seguranca, six.integer_types):
             raise TypeError('codigo_seguranca precisa ser do tipo inteiro.')
 
-        if self.nome_portador and not isinstance(self.nome_portador, six.string_types):
+        if self.nome_portador is not None and not isinstance(self.nome_portador, six.string_types):
             raise TypeError('nome_portador precisa ser do tipo string.')
 
         if self.numero and self.token:
@@ -51,7 +52,7 @@ class Cartao(object):
                 'você não pode usar os dados do cartão e token na mesma requisição.'
             )
 
-        if self.token and not isinstance(self.token, six.string_types):
+        if self.token is not None and not isinstance(self.token, six.string_types):
             raise TypeError('token precisa ser do tipo string.')
 
 
@@ -83,16 +84,16 @@ class Pedido(object):
         if not isinstance(self.data_hora, six.string_types):
             raise TypeError('data_hora precisa ser do tipo string.')
 
-        if self.descricao and not isinstance(self.descricao, six.string_types):
+        if self.descricao is not None and not isinstance(self.descricao, six.string_types):
             raise TypeError('descricao precisa ser do tipo string.')
 
-        if self.idioma and not isinstance(self.idioma, six.string_types):
+        if self.idioma is not None and not isinstance(self.idioma, six.string_types):
             raise TypeError('idioma precisa ser do tipo string.')
 
-        if self.taxa_embarque and not isinstance(self.taxa_embarque, six.integer_types):
+        if self.taxa_embarque is not None and not isinstance(self.taxa_embarque, six.integer_types):
             raise TypeError('taxa_embarque precisa ser do tipo inteiro.')
 
-        if self.soft_descriptor and not isinstance(self.soft_descriptor, six.string_types):
+        if self.soft_descriptor is not None and not isinstance(self.soft_descriptor, six.string_types):
             raise TypeError('soft_descriptor precisa ser do tipo string.')
 
 
@@ -214,7 +215,7 @@ class Avs(object):
             raise TypeError('endereco precisa ser do tipo string.')
 
         if not isinstance(self.complemento, six.string_types):
-            raise TypeError('endereco precisa ser do tipo string.')
+            raise TypeError('complemento precisa ser do tipo string.')
 
         if not isinstance(self.numero, six.integer_types):
             raise TypeError('numero precisa ser do tipo inteiro.')
@@ -250,17 +251,18 @@ class Captura(object):
         if not isinstance(self.valor, six.integer_types):
             raise TypeError('valor precisa ser do tipo inteiro.')
 
-        if not isinstance(self.taxa_embarque, six.integer_types):
+        if self.taxa_embarque is not None and not isinstance(self.taxa_embarque, six.integer_types):
             raise TypeError('taxa_embarque precisa ser do tipo inteiro.')
 
 
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
-                 pagamento=None, url_retorno=None, autorizar=3, capturar=True,
-                 campo_livre=None, bin=None, gerar_token=False, avs=None,
-                 autenticacao=None, autorizacao=None, token=None, tid=None,
-                 pan=None, status=None, url_autenticacao=None):
+                 pagamento=None, url_retorno=None, autorizar=None,
+                 capturar=None, campo_livre=None, bin=None, gerar_token=None,
+                 avs=None, autenticacao=None, autorizacao=None, captura=None,
+                 token=None, tid=None, pan=None, status=None,
+                 url_autenticacao=None):
         self.comercial = comercial
         self.cartao = cartao
         self.pedido = pedido
@@ -274,6 +276,7 @@ class Transacao(object):
         self.avs = avs
         self.autenticacao = autenticacao
         self.autorizacao = autorizacao
+        self.captura = captura
         self.token = token
         self.tid = tid
         self.pan = pan
@@ -282,10 +285,10 @@ class Transacao(object):
         self.validate()
 
     def validate(self):
-        if not isinstance(self.comercial, Comercial):
+        if self.comercial is not None and not isinstance(self.comercial, Comercial):
             raise TypeError('comercial precisa ser do tipo Comercial.')
 
-        if not isinstance(self.cartao, Cartao):
+        if self.cartao is not None and not isinstance(self.cartao, Cartao):
             raise TypeError('cartao precisa ser do tipo Cartao.')
 
         if not isinstance(self.pedido, Pedido):
@@ -294,44 +297,137 @@ class Transacao(object):
         if not isinstance(self.pagamento, Pagamento):
             raise TypeError('pagamento precisa ser do tipo Pagamento.')
 
-        if not isinstance(self.autorizar, six.integer_types):
+        if self.autorizar is not None and not isinstance(self.autorizar, six.integer_types):
             raise TypeError('autorizar precisa ser do tipo inteiro.')
 
         if self.autorizar == 1 and not isinstance(self.url_retorno, six.string_types):
             raise TypeError('url_retorno precisa ser do tipo string.')
 
-        if not isinstance(self.capturar, bool):
+        if self.capturar is not None and not isinstance(self.capturar, bool):
             raise TypeError('capturar precisa ser do tipo booleano.')
 
-        if self.campo_livre and not isinstance(self.campo_livre, six.string_types):
+        if self.campo_livre is not None and not isinstance(self.campo_livre, six.string_types):
             raise TypeError('campo_livre precisa ser do tipo string.')
 
-        if self.bin and not isinstance(self.bin, six.integer_types):
+        if self.bin is not None and not isinstance(self.bin, six.integer_types):
             raise TypeError('bin precisa ser do tipo inteiro.')
 
-        if not isinstance(self.gerar_token, bool):
+        if self.gerar_token is not None and not isinstance(self.gerar_token, bool):
             raise TypeError('gerar_token precisa ser do tipo booleano.')
 
-        if self.avs and not isinstance(self.avs, Avs):
+        if self.avs is not None and not isinstance(self.avs, Avs):
             raise TypeError('avs precisa ser do tipo Avs.')
 
-        if self.autenticacao and not isinstance(self.autenticacao, Autenticacao):
+        if self.autenticacao is not None and not isinstance(self.autenticacao, Autenticacao):
             raise TypeError('autenticacao precisa ser do tipo Autenticacao.')
 
-        if self.autorizacao and not isinstance(self.autorizacao, Autorizacao):
+        if self.autorizacao is not None and not isinstance(self.autorizacao, Autorizacao):
             raise TypeError('autorizacao precisa ser do tipo Autorizacao.')
 
-        if self.token and not isinstance(self.token, Token):
+        if self.captura is not None and not isinstance(self.captura, Captura):
+            raise TypeError('captura precisa ser do tipo Captura.')
+
+        if self.token is not None and not isinstance(self.token, Token):
             raise TypeError('token precisa ser do tipo Token.')
 
-        if self.tid and not isinstance(self.tid, six.string_types):
+        if self.tid is not None and not isinstance(self.tid, six.string_types):
             raise TypeError('tid precisa ser do tipo string.')
 
-        if self.pan and not isinstance(self.pan, six.string_types):
+        if self.pan is not None and not isinstance(self.pan, six.string_types):
             raise TypeError('pan precisa ser do tipo string.')
 
-        if self.status and not isinstance(self.status, six.integer_types):
+        if self.status is not None and not isinstance(self.status, six.integer_types):
             raise TypeError('status precisa ser do tipo inteiro.')
 
-        if self.url_autenticacao and not isinstance(self.url_autenticacao, six.string_types):
+        if self.url_autenticacao is not None and not isinstance(self.url_autenticacao, six.string_types):
             raise TypeError('url_autenticacao precisa ser do tipo string.')
+
+
+def xml_to_object(xml):
+    data = xmltodict.parse(xml)
+
+    if 'transacao' in data:
+        transacao = data['transacao']
+        pedido = dict_to_pedido(transacao.get('dados-pedido')) if transacao.get('dados-pedido') else None
+        pagamento = dict_to_pagamento(transacao.get('forma-pagamento')) if transacao.get('forma-pagamento') else None
+        autenticacao = dict_to_autenticacao(transacao.get('autenticacao')) if transacao.get('autenticacao') else None
+        autorizacao = dict_to_autorizacao(transacao.get('autorizacao')) if transacao.get('autorizacao') else None
+        captura = dict_to_captura(transacao.get('captura')) if transacao.get('captura') else None
+        tid = transacao.get('tid') if transacao.get('tid') else None
+        pan = transacao.get('pan') if transacao.get('pan') else None
+        status = int(transacao.get('status')) if transacao.get('status') else None
+        url_autenticacao = transacao.get('url-autenticacao') if transacao.get('url-autenticacao') else None
+        return Transacao(
+            pedido=pedido,
+            pagamento=pagamento,
+            autenticacao=autenticacao,
+            autorizacao=autorizacao,
+            captura=captura,
+            tid=tid,
+            pan=pan,
+            status=status,
+            url_autenticacao=url_autenticacao,
+        )
+
+
+def dict_to_pedido(data):
+    descricao = data.get('descricao') if data.get('descricao') else None
+    idioma = data.get('idioma') if data.get('idioma') else None
+    taxa_embarque = int(data.get('taxa-embarque')) if data.get('taxa-embarque') else None
+    soft_descriptor = data.get('soft-descriptor') if data.get('soft-descriptor') else None
+    pedido = Pedido(
+        numero=data.get('numero'),
+        valor=int(data.get('valor')),
+        moeda=int(data.get('moeda')),
+        data_hora=data.get('data-hora'),
+        descricao=descricao,
+        idioma=idioma,
+        taxa_embarque=taxa_embarque,
+        soft_descriptor=soft_descriptor
+    )
+    return pedido
+
+
+def dict_to_pagamento(data):
+    pagamento = Pagamento(
+        bandeira=data.get('bandeira'),
+        produto=data.get('produto'),
+        parcelas=int(data.get('parcelas')),
+    )
+    return pagamento
+
+
+def dict_to_autenticacao(data):
+    autenticacao = Autenticacao(
+        codigo=int(data.get('codigo')),
+        mensagem=data.get('mensagem'),
+        data_hora=data.get('data-hora'),
+        valor=int(data.get('valor')),
+        eci=int(data.get('eci')),
+    )
+    return autenticacao
+
+
+def dict_to_autorizacao(data):
+    autorizacao = Autorizacao(
+        codigo=int(data.get('codigo')),
+        mensagem=data.get('mensagem'),
+        data_hora=data.get('data-hora'),
+        valor=int(data.get('valor')),
+        lr=int(data.get('lr')),
+        arp=int(data.get('arp')),
+        nsu=int(data.get('nsu')),
+    )
+    return autorizacao
+
+
+def dict_to_captura(data):
+    taxa_embarque = int(data.get('taxa-embarque')) if data.get('taxa-embarque') else None
+    captura = Captura(
+        codigo=int(data.get('codigo')),
+        mensagem=data.get('mensagem'),
+        data_hora=data.get('data-hora'),
+        valor=int(data.get('valor')),
+        taxa_embarque=taxa_embarque,
+    )
+    return captura

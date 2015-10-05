@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<transacao versao="1.2.1" id="ff5beea1-dc15-462e-b742-291fb39748a8" xmlns="http://ecommerce.cbmp.com.br">
+  <tid>1006993069483CE61001</tid>
+  <pan>IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0=</pan>
+  <dados-pedido>
+    <numero>1234</numero>
+    <valor>10000</valor>
+    <moeda>986</moeda>
+    <data-hora>2015-10-05T17:37:42.582-03:00</data-hora>
+    <idioma>PT</idioma>
+    <taxa-embarque>0</taxa-embarque>
+  </dados-pedido>
+  <forma-pagamento>
+    <bandeira>visa</bandeira>
+    <produto>1</produto>
+    <parcelas>1</parcelas>
+  </forma-pagamento>
+  <status>0</status>
+  <url-autenticacao>https://qasecommerce.cielo.com.br/web/index.cbmp?id=5a3a7c089f5299f535dcdd1f502a38ba</url-autenticacao>
+</transacao>

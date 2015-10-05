@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<requisicao-captura id="{{ id }}" versao="1.3.0">
+    {% if tid %}
+    <tid>{{ tid }}</tid>
+    {% endif %}
+    {% if comercial %}
+    <dados-ec>
+        <numero>{{ comercial.numero}}</numero>
+        <chave>{{ comercial.chave }}</chave>
+    </dados-ec>
+    {% endif %}
+    {% if valor %}
+    <valor>{{ valor }}</valor>
+    {% endif %}
+    {% if taxa_embarque %}
+    <taxa-embarque>{{ taxa_embarque }}</taxa-embarque>
+    {% endif %}
+</requisicao-captura>

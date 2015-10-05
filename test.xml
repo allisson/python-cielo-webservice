@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<transacao versao="1.2.1" id="70a37e41-a08c-4800-95f7-d0c73aab1939" xmlns="http://ecommerce.cbmp.com.br">
+  <tid>100699306948372E1001</tid>
+  <pan>IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0=</pan>
+  <dados-pedido>
+    <numero>1234</numero>
+    <valor>10000</valor>
+    <moeda>986</moeda>
+    <data-hora>2015-10-05T11:52:32.776-03:00</data-hora>
+    <idioma>PT</idioma>
+    <taxa-embarque>0</taxa-embarque>
+  </dados-pedido>
+  <forma-pagamento>
+    <bandeira>visa</bandeira>
+    <produto>1</produto>
+    <parcelas>1</parcelas>
+  </forma-pagamento>
+  <status>6</status>
+  <autenticacao>
+    <codigo>6</codigo>
+    <mensagem>Transacao sem autenticacao</mensagem>
+    <data-hora>2015-10-05T11:52:32.804-03:00</data-hora>
+    <valor>10000</valor>
+    <eci>7</eci>
+  </autenticacao>
+  <autorizacao>
+    <codigo>6</codigo>
+    <mensagem>Transa\ufffd\ufffdo autorizada</mensagem>
+    <data-hora>2015-10-05T11:52:32.810-03:00</data-hora>
+    <valor>10000</valor>
+    <lr>00</lr>
+    <arp>123456</arp>
+    <nsu>732718</nsu>
+  </autorizacao>
+  <captura>
+    <codigo>6</codigo>
+    <mensagem>Transacao capturada com sucesso</mensagem>
+    <data-hora>2015-10-05T11:52:32.839-03:00</data-hora>
+    <valor>10000</valor>
+  </captura>
+</transacao>
+

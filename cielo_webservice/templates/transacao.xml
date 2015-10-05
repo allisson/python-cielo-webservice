@@ -51,7 +51,7 @@
   {% if transacao.autorizar %}
   <autorizar>{{ transacao.autorizar }}</autorizar>
   {% endif %}
-  {% if transacao.capturar %}
+  {% if transacao.capturar != None %}
   <capturar>{{ transacao.capturar | lower }}</capturar>
   {% endif %}
   {% if transacao.campo_livre %}

@@ -4,8 +4,9 @@ import os
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 import requests
 import uuid
+import six
 
-from cielo_webservice.models import Transacao
+from cielo_webservice.models import Transacao, Comercial, xml_to_object
 
 
 BASE_URL = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do'
@@ -42,10 +43,22 @@ class CieloRequest(object):
         xml = self.render_template(
             'transacao.xml', id=str(uuid.uuid4()), transacao=transacao
         )
-        print(xml)
+        # print(xml)
         response = requests.post(self.base_url, data={'mensagem': xml})
-        print(response.text)
-        self.assertFalse(True)
+        # print(response.text)
+        return xml_to_object(response.text)
 
-    def capturar(self):
-        pass
+    def capturar(self, tid=None, comercial=None, valor=None,
+                 taxa_embarque=None):
+        if not isinstance(tid, six.string_types):
+            raise TypeError('tid precisa ser do tipo string.')
+        if not isinstance(comercial, Comercial):
+            raise TypeError('comercial precisa ser do tipo Comercial.')
+        xml = self.render_template(
+            'captura.xml', id=str(uuid.uuid4()), tid=tid, comercial=comercial,
+            valor=valor, taxa_embarque=taxa_embarque
+        )
+        # print(xml)
+        response = requests.post(self.base_url, data={'mensagem': xml})
+        # print(response.text)
+        return xml_to_object(response.text)
