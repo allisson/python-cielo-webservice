@@ -8,7 +8,7 @@ import os
 
 from cielo_webservice.request import CieloRequest
 from cielo_webservice.models import (
-    Comercial, Cartao, Pedido, Pagamento, Transacao, Avs, Token
+    Comercial, Cartao, Pedido, Pagamento, Transacao, Avs, Token, Captura
 )
 
 
@@ -31,6 +31,11 @@ class MockedResponse(object):
 
 def token_mocked_response(*args, **kwargs):
     data = open(os.path.join(BASE_DIR, 'xml4.xml')).read()
+    return MockedResponse(data)
+
+
+def capturar_mocked_response(*args, **kwargs):
+    data = open(os.path.join(BASE_DIR, 'xml5.xml')).read()
     return MockedResponse(data)
 
 
@@ -57,6 +62,7 @@ class TestCieloRequest(TestCase):
             self.request.autorizar('transacao')
             assert excinfo.value.message == 'transacao precisa ser do tipo Transacao.'
 
+    @mock.patch('requests.post', capturar_mocked_response)
     def test_capturar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.capturar(tid=1, comercial=self.comercial)
@@ -65,6 +71,12 @@ class TestCieloRequest(TestCase):
         with pytest.raises(TypeError) as excinfo:
             self.request.capturar(tid='tid', comercial=1)
             assert excinfo.value.message == 'comercial precisa ser do tipo Comercial.'
+
+        transacao = self.request.capturar(
+            tid='10069930694849051001', comercial=self.comercial
+        )
+        self.assertTrue(isinstance(transacao, Transacao))
+        self.assertTrue(isinstance(transacao.captura, Captura))
 
     @mock.patch('requests.post', token_mocked_response)
     def test_token(self):
