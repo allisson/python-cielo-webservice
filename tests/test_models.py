@@ -6,7 +6,7 @@ import os
 
 from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
-    Transacao, Avs, Captura, Cancelamento, xml_to_object
+    Transacao, Avs, Captura, Cancelamento, Erro, xml_to_object
 )
 
 
@@ -361,6 +361,18 @@ class TestCancelamento(TestCase):
         assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
 
+class TestErro(TestCase):
+
+    def test_validate(self):
+        with pytest.raises(TypeError) as excinfo:
+            Erro(codigo=1, mensagem='mensagem')
+        assert 'codigo precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Erro(codigo='001', mensagem=1)
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
+
+
 class TestTransacao(TestCase):
 
     def test_validate(self):
@@ -625,3 +637,11 @@ class TestXmlToObject(TestCase):
             transacao.cancelamento.data_hora, '2015-10-06T16:45:10.547-03:00'
         )
         self.assertEqual(transacao.cancelamento.valor, 10000)
+
+    def test_erro(self):
+        erro = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml8.xml')).read()
+        )
+        self.assertTrue(isinstance(erro, Erro))
+        self.assertEqual(erro.codigo, '000')
+        self.assertEqual(erro.mensagem, 'Mensagem')

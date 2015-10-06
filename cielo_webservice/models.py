@@ -273,6 +273,21 @@ class Cancelamento(object):
             raise TypeError('valor precisa ser do tipo inteiro.')
 
 
+class Erro(object):
+
+    def __init__(self, codigo=None, mensagem=None):
+        self.codigo = codigo
+        self.mensagem = mensagem
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.codigo, six.string_types):
+            raise TypeError('codigo precisa ser do tipo string.')
+
+        if not isinstance(self.mensagem, six.string_types):
+            raise TypeError('mensagem precisa ser do tipo string.')
+
+
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
@@ -401,6 +416,12 @@ def xml_to_object(xml):
             codigo=retorno_token['token']['dados-token']['codigo-token'],
             status=int(retorno_token['token']['dados-token']['status']),
             numero=retorno_token['token']['dados-token']['numero-cartao-truncado']
+        )
+
+    if 'erro' in data:
+        return Erro(
+            codigo=data['erro']['codigo'],
+            mensagem=data['erro']['mensagem'],
         )
 
 

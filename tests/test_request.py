@@ -13,6 +13,7 @@ from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Transacao, Avs, Token, Captura,
     Cancelamento
 )
+from cielo_webservice.exceptions import CieloRequestError
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -49,6 +50,11 @@ def autorizar_mocked_response(*args, **kwargs):
 
 def cancelar_mocked_response(*args, **kwargs):
     data = open(os.path.join(BASE_DIR, 'xml7.xml')).read()
+    return MockedResponse(data)
+
+
+def erro_mocked_response(*args, **kwargs):
+    data = open(os.path.join(BASE_DIR, 'xml8.xml')).read()
     return MockedResponse(data)
 
 
@@ -92,6 +98,16 @@ class TestCieloRequest(TestCase):
             transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
         )
 
+    @mock.patch('requests.post', erro_mocked_response)
+    def test_autorizar_com_erro(self):
+        transacao = Transacao(
+            comercial=self.comercial, cartao=self.cartao, pedido=self.pedido,
+            pagamento=self.pagamento, autorizar=3, capturar=True
+        )
+        with pytest.raises(CieloRequestError) as excinfo:
+            self.request.autorizar(transacao)
+        assert 'Mensagem' in str(excinfo.value)
+
     @mock.patch('requests.post', capturar_mocked_response)
     def test_capturar(self):
         with pytest.raises(TypeError) as excinfo:
@@ -114,6 +130,14 @@ class TestCieloRequest(TestCase):
         self.assertTrue(isinstance(transacao, Transacao))
         self.assertTrue(isinstance(transacao.captura, Captura))
 
+    @mock.patch('requests.post', erro_mocked_response)
+    def test_capturar_com_erro(self):
+        with pytest.raises(CieloRequestError) as excinfo:
+            self.request.capturar(
+                tid='10069930694849051001', comercial=self.comercial
+            )
+        assert 'Mensagem' in str(excinfo.value)
+
     @mock.patch('requests.post', token_mocked_response)
     def test_gerar_token(self):
         with pytest.raises(TypeError) as excinfo:
@@ -128,6 +152,14 @@ class TestCieloRequest(TestCase):
             comercial=self.comercial, cartao=self.cartao
         )
         self.assertTrue(isinstance(token, Token))
+
+    @mock.patch('requests.post', erro_mocked_response)
+    def test_gerar_token_com_erro(self):
+        with pytest.raises(CieloRequestError) as excinfo:
+            self.request.gerar_token(
+                comercial=self.comercial, cartao=self.cartao
+            )
+        assert 'Mensagem' in str(excinfo.value)
 
     @mock.patch('requests.post', cancelar_mocked_response)
     def test_cancelar(self):
@@ -150,3 +182,11 @@ class TestCieloRequest(TestCase):
         )
         self.assertTrue(isinstance(transacao, Transacao))
         self.assertTrue(isinstance(transacao.cancelamento, Cancelamento))
+
+    @mock.patch('requests.post', erro_mocked_response)
+    def test_cancelar_com_erro(self):
+        with pytest.raises(CieloRequestError) as excinfo:
+            self.request.cancelar(
+                tid='1006993069484E8B1001', comercial=self.comercial
+            )
+        assert 'Mensagem' in str(excinfo.value)

@@ -6,7 +6,10 @@ import requests
 import uuid
 import six
 
-from cielo_webservice.models import Cartao, Transacao, Comercial, xml_to_object
+from cielo_webservice.models import (
+    Cartao, Transacao, Comercial, Erro, xml_to_object
+)
+from cielo_webservice.exceptions import CieloRequestError
 
 
 BASE_URL = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do'
@@ -45,7 +48,12 @@ class CieloRequest(object):
             'transacao.xml', id=str(uuid.uuid4()), transacao=transacao
         )
         response = requests.post(self.base_url, data={'mensagem': xml})
-        return xml_to_object(response.text)
+        object_data = xml_to_object(response.text)
+
+        if isinstance(object_data, Erro):
+            raise CieloRequestError(object_data.mensagem)
+
+        return object_data
 
     def capturar(self, tid=None, comercial=None, valor=None,
                  taxa_embarque=None):
@@ -61,7 +69,12 @@ class CieloRequest(object):
             valor=valor, taxa_embarque=taxa_embarque
         )
         response = requests.post(self.base_url, data={'mensagem': xml})
-        return xml_to_object(response.text)
+        object_data = xml_to_object(response.text)
+
+        if isinstance(object_data, Erro):
+            raise CieloRequestError(object_data.mensagem)
+
+        return object_data
 
     def gerar_token(self, comercial=None, cartao=None):
         if not isinstance(comercial, Comercial):
@@ -75,7 +88,12 @@ class CieloRequest(object):
             cartao=cartao
         )
         response = requests.post(self.base_url, data={'mensagem': xml})
-        return xml_to_object(response.text)
+        object_data = xml_to_object(response.text)
+
+        if isinstance(object_data, Erro):
+            raise CieloRequestError(object_data.mensagem)
+
+        return object_data
 
     def cancelar(self, tid=None, comercial=None, valor=None):
         if not isinstance(tid, six.string_types):
@@ -90,5 +108,9 @@ class CieloRequest(object):
             comercial=comercial, valor=valor
         )
         response = requests.post(self.base_url, data={'mensagem': xml})
-        print(response.text)
-        return xml_to_object(response.text)
+        object_data = xml_to_object(response.text)
+
+        if isinstance(object_data, Erro):
+            raise CieloRequestError(object_data.mensagem)
+
+        return object_data
