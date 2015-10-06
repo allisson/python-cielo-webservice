@@ -115,16 +115,16 @@ class TestCieloRequest(TestCase):
         self.assertTrue(isinstance(transacao.captura, Captura))
 
     @mock.patch('requests.post', token_mocked_response)
-    def test_token(self):
+    def test_gerar_token(self):
         with pytest.raises(TypeError) as excinfo:
-            self.request.token(comercial=1, cartao=self.cartao)
+            self.request.gerar_token(comercial=1, cartao=self.cartao)
         assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
-            self.request.token(comercial=self.comercial, cartao=1)
+            self.request.gerar_token(comercial=self.comercial, cartao=1)
         assert 'cartao precisa ser do tipo Cartao.' in str(excinfo.value)
 
-        token = self.request.token(
+        token = self.request.gerar_token(
             comercial=self.comercial, cartao=self.cartao
         )
         self.assertTrue(isinstance(token, Token))

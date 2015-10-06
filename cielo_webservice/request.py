@@ -63,7 +63,7 @@ class CieloRequest(object):
         response = requests.post(self.base_url, data={'mensagem': xml})
         return xml_to_object(response.text)
 
-    def token(self, comercial=None, cartao=None):
+    def gerar_token(self, comercial=None, cartao=None):
         if not isinstance(comercial, Comercial):
             raise TypeError('comercial precisa ser do tipo Comercial.')
 
