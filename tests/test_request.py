@@ -67,13 +67,13 @@ class TestCieloRequest(TestCase):
     def test_render_template(self):
         with pytest.raises(TemplateNotFound) as excinfo:
             self.request.render_template('notfound.xml', id=str(uuid.uuid4()))
-        assert excinfo.value.message == 'notfound.xml'
+        assert 'notfound.xml' in str(excinfo.value)
 
     @mock.patch('requests.post', autorizar_mocked_response)
     def test_autorizar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.autorizar('transacao')
-        assert excinfo.value.message == 'transacao precisa ser do tipo Transacao.'
+        assert 'transacao precisa ser do tipo Transacao.' in str(excinfo.value)
 
         transacao = Transacao(
             comercial=self.comercial, cartao=self.cartao, pedido=self.pedido,
@@ -90,11 +90,11 @@ class TestCieloRequest(TestCase):
     def test_capturar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.capturar(tid=1, comercial=self.comercial)
-        assert excinfo.value.message == 'tid precisa ser do tipo string.'
+        assert 'tid precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             self.request.capturar(tid='tid', comercial=1)
-        assert excinfo.value.message == 'comercial precisa ser do tipo Comercial.'
+        assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
 
         transacao = self.request.capturar(
             tid='10069930694849051001', comercial=self.comercial
@@ -106,11 +106,11 @@ class TestCieloRequest(TestCase):
     def test_token(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.token(comercial=1, cartao=self.cartao)
-        assert excinfo.value.message == 'comercial precisa ser do tipo Comercial.'
+        assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             self.request.token(comercial=self.comercial, cartao=1)
-        assert excinfo.value.message == 'cartao precisa ser do tipo Cartao.'
+        assert 'cartao precisa ser do tipo Cartao.' in str(excinfo.value)
 
         token = self.request.token(
             comercial=self.comercial, cartao=self.cartao

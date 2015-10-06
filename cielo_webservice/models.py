@@ -47,11 +47,6 @@ class Cartao(object):
         if self.nome_portador is not None and not isinstance(self.nome_portador, six.string_types):
             raise TypeError('nome_portador precisa ser do tipo string.')
 
-        if self.numero and self.token:
-            raise TypeError(
-                'você não pode usar os dados do cartão e token na mesma requisição.'
-            )
-
         if self.token is not None and not isinstance(self.token, six.string_types):
             raise TypeError('token precisa ser do tipo string.')
 

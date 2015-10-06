@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from unittest import TestCase
 import pytest
 import os
+import six
 
 from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
@@ -18,11 +19,11 @@ class TestComercial(TestCase):
     def test_validate(self):
         with pytest.raises(TypeError) as excinfo:
             Comercial(numero='1234', chave='1234')
-        assert excinfo.value.message == 'numero precisa ser do tipo inteiro.'
+        assert 'numero precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Comercial(numero=1234, chave=1234)
-        assert excinfo.value.message == 'chave precisa ser do tipo string.'
+        assert 'chave precisa ser do tipo string.' in str(excinfo.value)
 
 
 class TestCartao(TestCase):
@@ -33,46 +34,39 @@ class TestCartao(TestCase):
                 numero='1234', validade=201805, indicador=1,
                 codigo_seguranca=123, nome_portador='Fulano Silva'
             )
-        assert excinfo.value.message == 'numero precisa ser do tipo inteiro.'
+        assert 'numero precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Cartao(
                 numero=1234, validade='201805', indicador=1,
                 codigo_seguranca=123, nome_portador='Fulano Silva'
             )
-        assert excinfo.value.message == 'validade precisa ser do tipo inteiro.'
+        assert 'validade precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Cartao(
                 numero=1234, validade=201805, indicador='1',
                 codigo_seguranca=123, nome_portador='Fulano Silva'
             )
-        assert excinfo.value.message == 'indicador precisa ser do tipo inteiro.'
+        assert 'indicador precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Cartao(
                 numero=1234, validade=201805, indicador=1,
                 codigo_seguranca='123', nome_portador='Fulano Silva'
             )
-        assert excinfo.value.message == 'codigo_seguranca precisa ser do tipo inteiro.'
+        assert 'codigo_seguranca precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Cartao(
                 numero=1234, validade=201805, indicador=1,
                 codigo_seguranca=123, nome_portador=123
             )
-        assert excinfo.value.message == 'nome_portador precisa ser do tipo string.'
-
-        with pytest.raises(TypeError) as excinfo:
-            Cartao(
-                numero=1234, validade=201805, indicador=1,
-                codigo_seguranca=123, nome_portador='Fulano Silva', token='123'
-            )
-        assert excinfo.value.message == 'você não pode usar os dados do cartão e token na mesma requisição.'
+        assert 'nome_portador precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Cartao(token=123)
-        assert excinfo.value.message == 'token precisa ser do tipo string.'
+        assert 'token precisa ser do tipo string.' in str(excinfo.value)
 
 
 class TestPedido(TestCase):
@@ -83,56 +77,56 @@ class TestPedido(TestCase):
                 numero=1234, valor=10000, moeda=986,
                 data_hora='2011-12-07T11:43:37',
             )
-        assert excinfo.value.message == 'numero precisa ser do tipo string.'
+        assert 'numero precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor='10000', moeda=986,
                 data_hora='2011-12-07T11:43:37',
             )
-        assert excinfo.value.message == 'valor precisa ser do tipo inteiro.'
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda='986',
                 data_hora='2011-12-07T11:43:37',
             )
-        assert excinfo.value.message == 'moeda precisa ser do tipo inteiro.'
+        assert 'moeda precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda=986,
                 data_hora=20111207,
             )
-        assert excinfo.value.message == 'data_hora precisa ser do tipo string.'
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda=986,
                 data_hora='2011-12-07T11:43:37', descricao=123
             )
-        assert excinfo.value.message == 'descricao precisa ser do tipo string.'
+        assert 'descricao precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda=986,
                 data_hora='2011-12-07T11:43:37', idioma=123
             )
-        assert excinfo.value.message == 'idioma precisa ser do tipo string.'
+        assert 'idioma precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda=986,
                 data_hora='2011-12-07T11:43:37', taxa_embarque='123'
             )
-        assert excinfo.value.message == 'taxa_embarque precisa ser do tipo inteiro.'
+        assert 'taxa_embarque precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pedido(
                 numero='1234', valor=10000, moeda=986,
                 data_hora='2011-12-07T11:43:37', soft_descriptor=123
             )
-        assert excinfo.value.message == 'soft_descriptor precisa ser do tipo string.'
+        assert 'soft_descriptor precisa ser do tipo string.' in str(excinfo.value)
 
 
 class TestPagamento(TestCase):
@@ -140,15 +134,15 @@ class TestPagamento(TestCase):
     def test_validate(self):
         with pytest.raises(TypeError) as excinfo:
             Pagamento(bandeira=1, produto=1, parcelas=1)
-        assert excinfo.value.message == 'bandeira precisa ser do tipo string.'
+        assert 'bandeira precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pagamento(bandeira='visa', produto=1, parcelas=1)
-        assert excinfo.value.message == 'produto precisa ser do tipo string.'
+        assert 'produto precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Pagamento(bandeira='visa', produto='1', parcelas='1')
-        assert excinfo.value.message == 'parcelas precisa ser do tipo inteiro.'
+        assert 'parcelas precisa ser do tipo inteiro.' in str(excinfo.value)
 
 
 class TestAutenticacao(TestCase):
@@ -159,35 +153,35 @@ class TestAutenticacao(TestCase):
                 codigo='1', mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, eci=7
             )
-        assert excinfo.value.message == 'codigo precisa ser do tipo inteiro.'
+        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autenticacao(
                 codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
                 valor=10000, eci=7
             )
-        assert excinfo.value.message == 'mensagem precisa ser do tipo string.'
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autenticacao(
                 codigo=1, mensagem='msg', data_hora=201112,
                 valor=10000, eci=7
             )
-        assert excinfo.value.message == 'data_hora precisa ser do tipo string.'
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autenticacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor='10000', eci=7
             )
-        assert excinfo.value.message == 'valor precisa ser do tipo inteiro.'
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autenticacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, eci='7'
             )
-        assert excinfo.value.message == 'eci precisa ser do tipo inteiro.'
+        assert 'eci precisa ser do tipo inteiro.' in str(excinfo.value)
 
 
 class TestAutorizacao(TestCase):
@@ -198,49 +192,49 @@ class TestAutorizacao(TestCase):
                 codigo='1', mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, lr=1, arp=1, nsu=1
             )
-        assert excinfo.value.message == 'codigo precisa ser do tipo inteiro.'
+        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
                 valor=10000, lr=1, arp=1, nsu=1
             )
-        assert excinfo.value.message == 'mensagem precisa ser do tipo string.'
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora=201112,
                 valor=10000, lr=1, arp=1, nsu=1
             )
-        assert excinfo.value.message == 'data_hora precisa ser do tipo string.'
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor='10000', lr=1, arp=1, nsu=1
             )
-        assert excinfo.value.message == 'valor precisa ser do tipo inteiro.'
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, lr='1', arp=1, nsu=1
             )
-        assert excinfo.value.message == 'lr precisa ser do tipo inteiro.'
+        assert 'lr precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, lr=1, arp='1', nsu=1
             )
-        assert excinfo.value.message == 'arp precisa ser do tipo inteiro.'
+        assert 'arp precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
                 valor=10000, lr=1, arp=1, nsu='1'
             )
-        assert excinfo.value.message == 'nsu precisa ser do tipo inteiro.'
+        assert 'nsu precisa ser do tipo inteiro.' in str(excinfo.value)
 
 
 class TestToken(TestCase):
@@ -248,15 +242,15 @@ class TestToken(TestCase):
     def test_validate(self):
         with pytest.raises(TypeError) as excinfo:
             Token(codigo=1, status=1, numero='1234')
-        assert excinfo.value.message == 'codigo precisa ser do tipo string.'
+        assert 'codigo precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Token(codigo='code', status='1', numero='1234')
-        assert excinfo.value.message == 'status precisa ser do tipo inteiro.'
+        assert 'status precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Token(codigo='code', status=1, numero=1234)
-        assert excinfo.value.message == 'numero precisa ser do tipo string.'
+        assert 'numero precisa ser do tipo string.' in str(excinfo.value)
 
 
 class TestAvs(TestCase):
@@ -267,35 +261,35 @@ class TestAvs(TestCase):
                 endereco=1, complemento='', numero=1, bairro='Bairro',
                 cep='00000-000'
             )
-        assert excinfo.value.message == 'endereco precisa ser do tipo string.'
+        assert 'endereco precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Avs(
                 endereco='Rua 1', complemento=1, numero=1, bairro='Bairro',
                 cep='00000-000'
             )
-        assert excinfo.value.message == 'complemento precisa ser do tipo string.'
+        assert 'complemento precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Avs(
                 endereco='Rua 1', complemento='', numero='1', bairro='Bairro',
                 cep='00000-000'
             )
-        assert excinfo.value.message == 'numero precisa ser do tipo inteiro.'
+        assert 'numero precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Avs(
                 endereco='Rua 1', complemento='', numero=1, bairro=1,
                 cep='00000-000'
             )
-        assert excinfo.value.message == 'bairro precisa ser do tipo string.'
+        assert 'bairro precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Avs(
                 endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
                 cep=00000000
             )
-        assert excinfo.value.message == 'cep precisa ser do tipo string.'
+        assert 'cep precisa ser do tipo string.' in str(excinfo.value)
 
 
 class TestTransacao(TestCase):
@@ -334,84 +328,84 @@ class TestTransacao(TestCase):
                 comercial=1, cartao=cartao, pedido=pedido,
                 pagamento=pagamento,
             )
-        assert excinfo.value.message == 'comercial precisa ser do tipo Comercial.'
+        assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=1, pedido=pedido,
                 pagamento=pagamento,
             )
-        assert excinfo.value.message == 'cartao precisa ser do tipo Cartao.'
+        assert 'cartao precisa ser do tipo Cartao.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=1,
                 pagamento=pagamento,
             )
-        assert excinfo.value.message == 'pedido precisa ser do tipo Pedido.'
+        assert 'pedido precisa ser do tipo Pedido.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=1,
             )
-        assert excinfo.value.message == 'pagamento precisa ser do tipo Pagamento.'
+        assert 'pagamento precisa ser do tipo Pagamento.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, autorizar='1'
             )
-        assert excinfo.value.message == 'autorizar precisa ser do tipo inteiro.'
+        assert 'autorizar precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, autorizar=1, url_retorno=1
             )
-        assert excinfo.value.message == 'url_retorno precisa ser do tipo string.'
+        assert 'url_retorno precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, capturar='false'
             )
-        assert excinfo.value.message == 'capturar precisa ser do tipo booleano.'
+        assert 'capturar precisa ser do tipo booleano.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, campo_livre=1
             )
-        assert excinfo.value.message == 'campo_livre precisa ser do tipo string.'
+        assert 'campo_livre precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, bin='1234'
             )
-        assert excinfo.value.message == 'bin precisa ser do tipo inteiro.'
+        assert 'bin precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, gerar_token='false', avs=avs
             )
-        assert excinfo.value.message == 'gerar_token precisa ser do tipo booleano.'
+        assert 'gerar_token precisa ser do tipo booleano.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, avs=1
             )
-        assert excinfo.value.message == 'avs precisa ser do tipo Avs.'
+        assert 'avs precisa ser do tipo Avs.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, autenticacao=1, autorizacao=autorizacao
             )
-        assert excinfo.value.message == 'autenticacao precisa ser do tipo Autenticacao.'
+        assert 'autenticacao precisa ser do tipo Autenticacao.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -419,7 +413,7 @@ class TestTransacao(TestCase):
                 pagamento=pagamento, autenticacao=autenticacao, autorizacao=1,
                 captura=captura
             )
-        assert excinfo.value.message == 'autorizacao precisa ser do tipo Autorizacao.'
+        assert 'autorizacao precisa ser do tipo Autorizacao.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -427,21 +421,21 @@ class TestTransacao(TestCase):
                 pagamento=pagamento, autenticacao=autenticacao,
                 autorizacao=autorizacao, captura=1
             )
-        assert excinfo.value.message == 'captura precisa ser do tipo Captura.'
+        assert 'captura precisa ser do tipo Captura.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, tid=1, pan='pan', status=1
             )
-        assert excinfo.value.message == 'tid precisa ser do tipo string.'
+        assert 'tid precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, tid='1', pan=1, status=1
             )
-        assert excinfo.value.message == 'pan precisa ser do tipo string.'
+        assert 'pan precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -449,7 +443,7 @@ class TestTransacao(TestCase):
                 pagamento=pagamento, tid='1', pan='pan', status='1',
                 url_autenticacao='http://google.com'
             )
-        assert excinfo.value.message == 'status precisa ser do tipo inteiro.'
+        assert 'status precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
@@ -457,14 +451,14 @@ class TestTransacao(TestCase):
                 pagamento=pagamento, tid='1', pan='pan', status=1,
                 url_autenticacao=1, token=token
             )
-        assert excinfo.value.message == 'url_autenticacao precisa ser do tipo string.'
+        assert 'url_autenticacao precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
                 pagamento=pagamento, tid='1', pan='pan', status=1, token=1
             )
-        assert excinfo.value.message == 'token precisa ser do tipo Token.'
+        assert 'token precisa ser do tipo Token.' in str(excinfo.value)
 
 
 class TestCaptura(TestCase):
@@ -475,35 +469,35 @@ class TestCaptura(TestCase):
                 codigo='1', mensagem='mensagem',
                 data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
             )
-        assert excinfo.value.message == 'codigo precisa ser do tipo inteiro.'
+        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Captura(
                 codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
                 valor=10000, taxa_embarque=0
             )
-        assert excinfo.value.message == 'mensagem precisa ser do tipo string.'
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Captura(
                 codigo=1, mensagem='mensagem', data_hora=1,
                 valor=10000, taxa_embarque=0
             )
-        assert excinfo.value.message == 'data_hora precisa ser do tipo string.'
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Captura(
                 codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
                 valor='10000', taxa_embarque=0
             )
-        assert excinfo.value.message == 'valor precisa ser do tipo inteiro.'
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Captura(
                 codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
                 valor=10000, taxa_embarque='0'
             )
-        assert excinfo.value.message == 'taxa_embarque precisa ser do tipo inteiro.'
+        assert 'taxa_embarque precisa ser do tipo inteiro.' in str(excinfo.value)
 
 
 class TestXmlToObject(TestCase):
