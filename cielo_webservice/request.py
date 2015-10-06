@@ -53,6 +53,8 @@ class CieloRequest(object):
             raise TypeError('tid precisa ser do tipo string.')
         if not isinstance(comercial, Comercial):
             raise TypeError('comercial precisa ser do tipo Comercial.')
+        if valor is not None and not isinstance(valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
 
         xml = self.render_template(
             'captura.xml', id=str(uuid.uuid4()), tid=tid, comercial=comercial,
@@ -73,4 +75,20 @@ class CieloRequest(object):
             cartao=cartao
         )
         response = requests.post(self.base_url, data={'mensagem': xml})
+        return xml_to_object(response.text)
+
+    def cancelar(self, tid=None, comercial=None, valor=None):
+        if not isinstance(tid, six.string_types):
+            raise TypeError('tid precisa ser do tipo string.')
+        if not isinstance(comercial, Comercial):
+            raise TypeError('comercial precisa ser do tipo Comercial.')
+        if valor is not None and not isinstance(valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
+
+        xml = self.render_template(
+            'cancelamento.xml', id=str(uuid.uuid4()), tid=tid,
+            comercial=comercial, valor=valor
+        )
+        response = requests.post(self.base_url, data={'mensagem': xml})
+        print(response.text)
         return xml_to_object(response.text)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from unittest import TestCase
+from unittest import TestCase, skip
 from datetime import datetime
 import pytest
 import mock
@@ -10,7 +10,8 @@ from jinja2 import TemplateNotFound
 
 from cielo_webservice.request import CieloRequest
 from cielo_webservice.models import (
-    Comercial, Cartao, Pedido, Pagamento, Transacao, Avs, Token, Captura
+    Comercial, Cartao, Pedido, Pagamento, Transacao, Avs, Token, Captura,
+    Cancelamento
 )
 
 
@@ -43,6 +44,11 @@ def capturar_mocked_response(*args, **kwargs):
 
 def autorizar_mocked_response(*args, **kwargs):
     data = open(os.path.join(BASE_DIR, 'xml6.xml')).read()
+    return MockedResponse(data)
+
+
+def cancelar_mocked_response(*args, **kwargs):
+    data = open(os.path.join(BASE_DIR, 'xml7.xml')).read()
     return MockedResponse(data)
 
 
@@ -96,6 +102,12 @@ class TestCieloRequest(TestCase):
             self.request.capturar(tid='tid', comercial=1)
         assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
 
+        with pytest.raises(TypeError) as excinfo:
+            self.request.capturar(
+                tid='tid', comercial=self.comercial, valor='10000'
+            )
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
+
         transacao = self.request.capturar(
             tid='10069930694849051001', comercial=self.comercial
         )
@@ -116,3 +128,25 @@ class TestCieloRequest(TestCase):
             comercial=self.comercial, cartao=self.cartao
         )
         self.assertTrue(isinstance(token, Token))
+
+    @mock.patch('requests.post', cancelar_mocked_response)
+    def test_cancelar(self):
+        with pytest.raises(TypeError) as excinfo:
+            self.request.cancelar(tid=1, comercial=self.comercial)
+        assert 'tid precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            self.request.cancelar(tid='tid', comercial=1)
+        assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            self.request.cancelar(
+                tid='tid', comercial=self.comercial, valor='10000'
+            )
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
+
+        transacao = self.request.cancelar(
+            tid='1006993069484E8B1001', comercial=self.comercial
+        )
+        self.assertTrue(isinstance(transacao, Transacao))
+        self.assertTrue(isinstance(transacao.cancelamento, Cancelamento))

@@ -250,14 +250,37 @@ class Captura(object):
             raise TypeError('taxa_embarque precisa ser do tipo inteiro.')
 
 
+class Cancelamento(object):
+
+    def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None):
+        self.codigo = codigo
+        self.mensagem = mensagem
+        self.data_hora = data_hora
+        self.valor = valor
+        self.validate()
+
+    def validate(self):
+        if not isinstance(self.codigo, six.integer_types):
+            raise TypeError('codigo precisa ser do tipo inteiro.')
+
+        if not isinstance(self.mensagem, six.string_types):
+            raise TypeError('mensagem precisa ser do tipo string.')
+
+        if not isinstance(self.data_hora, six.string_types):
+            raise TypeError('data_hora precisa ser do tipo string.')
+
+        if not isinstance(self.valor, six.integer_types):
+            raise TypeError('valor precisa ser do tipo inteiro.')
+
+
 class Transacao(object):
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
                  pagamento=None, url_retorno=None, autorizar=None,
                  capturar=None, campo_livre=None, bin=None, gerar_token=None,
                  avs=None, autenticacao=None, autorizacao=None, captura=None,
-                 token=None, tid=None, pan=None, status=None,
-                 url_autenticacao=None):
+                 token=None, cancelamento=None, tid=None, pan=None,
+                 status=None, url_autenticacao=None):
         self.comercial = comercial
         self.cartao = cartao
         self.pedido = pedido
@@ -273,6 +296,7 @@ class Transacao(object):
         self.autorizacao = autorizacao
         self.captura = captura
         self.token = token
+        self.cancelamento = cancelamento
         self.tid = tid
         self.pan = pan
         self.status = status
@@ -325,6 +349,9 @@ class Transacao(object):
         if self.token is not None and not isinstance(self.token, Token):
             raise TypeError('token precisa ser do tipo Token.')
 
+        if self.cancelamento is not None and not isinstance(self.cancelamento, Cancelamento):
+            raise TypeError('cancelamento precisa ser do tipo Cancelamento.')
+
         if self.tid is not None and not isinstance(self.tid, six.string_types):
             raise TypeError('tid precisa ser do tipo string.')
 
@@ -349,6 +376,7 @@ def xml_to_object(xml):
         autorizacao = dict_to_autorizacao(transacao.get('autorizacao')) if transacao.get('autorizacao') else None
         token = dict_to_token(transacao.get('token')) if transacao.get('token') else None
         captura = dict_to_captura(transacao.get('captura')) if transacao.get('captura') else None
+        cancelamento = dict_to_cancelamento(transacao.get('cancelamentos')) if transacao.get('cancelamentos') else None
         tid = transacao.get('tid') if transacao.get('tid') else None
         pan = transacao.get('pan') if transacao.get('pan') else None
         status = int(transacao.get('status')) if transacao.get('status') else None
@@ -360,6 +388,7 @@ def xml_to_object(xml):
             autorizacao=autorizacao,
             token=token,
             captura=captura,
+            cancelamento=cancelamento,
             tid=tid,
             pan=pan,
             status=status,
@@ -445,3 +474,14 @@ def dict_to_token(data):
         numero=data['dados-token']['numero-cartao-truncado']
     )
     return token
+
+
+def dict_to_cancelamento(data):
+    data = data['cancelamento']
+    cancelamento = Cancelamento(
+        codigo=int(data.get('codigo')),
+        mensagem=data.get('mensagem'),
+        data_hora=data.get('data-hora'),
+        valor=int(data.get('valor'))
+    )
+    return cancelamento

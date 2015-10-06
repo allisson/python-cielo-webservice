@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<requisicao-cancelamento id="{{ id }}" versao="1.3.0">
+    <tid>{{ tid }}</tid>
+    {% if comercial %}
+    <dados-ec>
+        <numero>{{ comercial.numero }}</numero>
+        <chave>{{ comercial.chave }}</chave>
+    </dados-ec>
+    {% endif %}
+    {% if valor %}
+    <valor>{{ valor }}</valor>
+    {% endif %}
+</requisicao-cancelamento>

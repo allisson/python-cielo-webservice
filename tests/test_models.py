@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 from unittest import TestCase
 import pytest
 import os
-import six
 
 from cielo_webservice.models import (
     Comercial, Cartao, Pedido, Pagamento, Autenticacao, Autorizacao, Token,
-    Transacao, Avs, Captura, xml_to_object
+    Transacao, Avs, Captura, Cancelamento, xml_to_object
 )
 
 
@@ -292,6 +291,76 @@ class TestAvs(TestCase):
         assert 'cep precisa ser do tipo string.' in str(excinfo.value)
 
 
+class TestCaptura(TestCase):
+
+    def test_validate(self):
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo='1', mensagem='mensagem',
+                data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
+            )
+        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
+                valor=10000, taxa_embarque=0
+            )
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora=1,
+                valor=10000, taxa_embarque=0
+            )
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+                valor='10000', taxa_embarque=0
+            )
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Captura(
+                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+                valor=10000, taxa_embarque='0'
+            )
+        assert 'taxa_embarque precisa ser do tipo inteiro.' in str(excinfo.value)
+
+
+class TestCancelamento(TestCase):
+
+    def test_validate(self):
+        with pytest.raises(TypeError) as excinfo:
+            Cancelamento(
+                codigo='1', mensagem='mensagem',
+                data_hora='2011-12-07T11:43:37', valor=10000,
+            )
+        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Cancelamento(
+                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
+                valor=10000,
+            )
+        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Cancelamento(
+                codigo=1, mensagem='mensagem', data_hora=201112, valor=10000
+            )
+        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            Cancelamento(
+                codigo=1, mensagem='mensagem',
+                data_hora='2011-12-07T11:43:37', valor='10000',
+            )
+        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
+
+
 class TestTransacao(TestCase):
 
     def test_validate(self):
@@ -321,6 +390,10 @@ class TestTransacao(TestCase):
         captura = Captura(
             codigo=1, mensagem='mensagem',
             data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
+        )
+        cancelamento = Cancelamento(
+            codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+            valor=10000,
         )
 
         with pytest.raises(TypeError) as excinfo:
@@ -456,48 +529,18 @@ class TestTransacao(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Transacao(
                 comercial=comercial, cartao=cartao, pedido=pedido,
-                pagamento=pagamento, tid='1', pan='pan', status=1, token=1
+                pagamento=pagamento, tid='1', pan='pan', status=1, token=1,
+                cancelamento=cancelamento
             )
         assert 'token precisa ser do tipo Token.' in str(excinfo.value)
 
-
-class TestCaptura(TestCase):
-
-    def test_validate(self):
         with pytest.raises(TypeError) as excinfo:
-            Captura(
-                codigo='1', mensagem='mensagem',
-                data_hora='2011-12-07T11:43:37', valor=10000, taxa_embarque=0
+            Transacao(
+                comercial=comercial, cartao=cartao, pedido=pedido,
+                pagamento=pagamento, tid='1', pan='pan', status=1,
+                cancelamento=1
             )
-        assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
-
-        with pytest.raises(TypeError) as excinfo:
-            Captura(
-                codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
-                valor=10000, taxa_embarque=0
-            )
-        assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
-
-        with pytest.raises(TypeError) as excinfo:
-            Captura(
-                codigo=1, mensagem='mensagem', data_hora=1,
-                valor=10000, taxa_embarque=0
-            )
-        assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
-
-        with pytest.raises(TypeError) as excinfo:
-            Captura(
-                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
-                valor='10000', taxa_embarque=0
-            )
-        assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
-
-        with pytest.raises(TypeError) as excinfo:
-            Captura(
-                codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
-                valor=10000, taxa_embarque='0'
-            )
-        assert 'taxa_embarque precisa ser do tipo inteiro.' in str(excinfo.value)
+        assert 'cancelamento precisa ser do tipo Cancelamento.' in str(excinfo.value)
 
 
 class TestXmlToObject(TestCase):
@@ -563,3 +606,22 @@ class TestXmlToObject(TestCase):
         )
         self.assertEqual(token.status, 1)
         self.assertEqual(token.numero, '211141******2104')
+
+    def test_cancelamento(self):
+        transacao = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml7.xml')).read()
+        )
+        self.assertTrue(isinstance(transacao, Transacao))
+        self.assertEqual(transacao.tid, '1006993069484E8B1001')
+        self.assertEqual(
+            transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
+        )
+        self.assertTrue(isinstance(transacao.cancelamento, Cancelamento))
+        self.assertEqual(transacao.cancelamento.codigo, 9)
+        self.assertEqual(
+            transacao.cancelamento.mensagem, 'Transacao cancelada com sucesso'
+        )
+        self.assertEqual(
+            transacao.cancelamento.data_hora, '2015-10-06T16:45:10.547-03:00'
+        )
+        self.assertEqual(transacao.cancelamento.valor, 10000)
