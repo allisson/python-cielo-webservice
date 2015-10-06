@@ -6,7 +6,8 @@ requires = [
     'requests',
     'jinja2',
     'six',
-    'xmltodict'
+    'xmltodict',
+    'mock',
 ]
 
 testing_extras = [

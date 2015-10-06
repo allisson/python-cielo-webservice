@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<requisicao-token id="{{ id }}" versao="1.2.1">
+  {% if comercial %}
+  <dados-ec>
+    <numero>{{ comercial.numero }}</numero>
+    <chave>{{ comercial.chave }}</chave>
+  </dados-ec>
+  {% endif %}
+  {% if cartao %}
+  <dados-portador>
+    <numero>{{ cartao.numero }}</numero>
+    <validade>{{ cartao.validade }}</validade>
+    {% if cartao.nome_portador %}
+    <nome-portador>{{ cartao.nome_portador }}</nome-portador>
+    {% endif %}
+  </dados-portador>
+  {% endif %}
+</requisicao-token>

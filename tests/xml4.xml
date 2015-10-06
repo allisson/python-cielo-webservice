@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<retorno-token versao="1.2.1" id="1bf601d4-ddd3-495e-b090-82b8ff141ee6" xmlns="http://ecommerce.cbmp.com.br">
+  <token>
+    <dados-token>
+      <codigo-token>HYcQ0MQ39fl8kn9OR7lFsTtxa+wNuM4lqQLUeN5SYZY=</codigo-token>
+      <status>1</status>
+      <numero-cartao-truncado>211141******2104</numero-cartao-truncado>
+    </dados-token>
+  </token>
+</retorno-token>

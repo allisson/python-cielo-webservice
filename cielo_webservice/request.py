@@ -6,7 +6,7 @@ import requests
 import uuid
 import six
 
-from cielo_webservice.models import Transacao, Comercial, xml_to_object
+from cielo_webservice.models import Cartao, Transacao, Comercial, xml_to_object
 
 
 BASE_URL = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do'
@@ -40,12 +40,11 @@ class CieloRequest(object):
     def autorizar(self, transacao):
         if not isinstance(transacao, Transacao):
             raise TypeError('transacao precisa ser do tipo Transacao.')
+
         xml = self.render_template(
             'transacao.xml', id=str(uuid.uuid4()), transacao=transacao
         )
-        # print(xml)
         response = requests.post(self.base_url, data={'mensagem': xml})
-        # print(response.text)
         return xml_to_object(response.text)
 
     def capturar(self, tid=None, comercial=None, valor=None,
@@ -54,11 +53,24 @@ class CieloRequest(object):
             raise TypeError('tid precisa ser do tipo string.')
         if not isinstance(comercial, Comercial):
             raise TypeError('comercial precisa ser do tipo Comercial.')
+
         xml = self.render_template(
             'captura.xml', id=str(uuid.uuid4()), tid=tid, comercial=comercial,
             valor=valor, taxa_embarque=taxa_embarque
         )
-        # print(xml)
         response = requests.post(self.base_url, data={'mensagem': xml})
-        # print(response.text)
+        return xml_to_object(response.text)
+
+    def token(self, comercial=None, cartao=None):
+        if not isinstance(comercial, Comercial):
+            raise TypeError('comercial precisa ser do tipo Comercial.')
+
+        if not isinstance(cartao, Cartao):
+            raise TypeError('cartao precisa ser do tipo Cartao.')
+
+        xml = self.render_template(
+            'token.xml', id=str(uuid.uuid4()), comercial=comercial,
+            cartao=cartao
+        )
+        response = requests.post(self.base_url, data={'mensagem': xml})
         return xml_to_object(response.text)

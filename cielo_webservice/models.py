@@ -182,15 +182,15 @@ class Autorizacao(object):
 
 class Token(object):
 
-    def __init__(self, code=None, status=None, numero=None):
-        self.code = code
+    def __init__(self, codigo=None, status=None, numero=None):
+        self.codigo = codigo
         self.status = status
         self.numero = numero
         self.validate()
 
     def validate(self):
-        if not isinstance(self.code, six.string_types):
-            raise TypeError('code precisa ser do tipo string.')
+        if not isinstance(self.codigo, six.string_types):
+            raise TypeError('codigo precisa ser do tipo string.')
 
         if not isinstance(self.status, six.integer_types):
             raise TypeError('status precisa ser do tipo inteiro.')
@@ -352,6 +352,7 @@ def xml_to_object(xml):
         pagamento = dict_to_pagamento(transacao.get('forma-pagamento')) if transacao.get('forma-pagamento') else None
         autenticacao = dict_to_autenticacao(transacao.get('autenticacao')) if transacao.get('autenticacao') else None
         autorizacao = dict_to_autorizacao(transacao.get('autorizacao')) if transacao.get('autorizacao') else None
+        token = dict_to_token(transacao.get('token')) if transacao.get('token') else None
         captura = dict_to_captura(transacao.get('captura')) if transacao.get('captura') else None
         tid = transacao.get('tid') if transacao.get('tid') else None
         pan = transacao.get('pan') if transacao.get('pan') else None
@@ -362,11 +363,20 @@ def xml_to_object(xml):
             pagamento=pagamento,
             autenticacao=autenticacao,
             autorizacao=autorizacao,
+            token=token,
             captura=captura,
             tid=tid,
             pan=pan,
             status=status,
             url_autenticacao=url_autenticacao,
+        )
+
+    if 'retorno-token' in data:
+        retorno_token = data['retorno-token']
+        return Token(
+            codigo=retorno_token['token']['dados-token']['codigo-token'],
+            status=int(retorno_token['token']['dados-token']['status']),
+            numero=retorno_token['token']['dados-token']['numero-cartao-truncado']
         )
 
 
@@ -431,3 +441,12 @@ def dict_to_captura(data):
         taxa_embarque=taxa_embarque,
     )
     return captura
+
+
+def dict_to_token(data):
+    token = Token(
+        codigo=data['dados-token']['codigo-token'],
+        status=int(data['dados-token']['status']),
+        numero=data['dados-token']['numero-cartao-truncado']
+    )
+    return token

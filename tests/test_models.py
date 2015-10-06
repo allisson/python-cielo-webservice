@@ -247,15 +247,15 @@ class TestToken(TestCase):
 
     def test_validate(self):
         with pytest.raises(TypeError) as excinfo:
-            Token(code=1, status=1, numero='1234')
+            Token(codigo=1, status=1, numero='1234')
             assert excinfo.value.message == 'code precisa ser do tipo string.'
 
         with pytest.raises(TypeError) as excinfo:
-            Token(code='code', status='1', numero='1234')
+            Token(codigo='code', status='1', numero='1234')
             assert excinfo.value.message == 'status precisa ser do tipo inteiro.'
 
         with pytest.raises(TypeError) as excinfo:
-            Token(code='code', status=1, numero=1234)
+            Token(codigo='code', status=1, numero=1234)
             assert excinfo.value.message == 'numero precisa ser do tipo string.'
 
 
@@ -319,7 +319,7 @@ class TestTransacao(TestCase):
             codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
             valor=10000, lr=1, arp=1, nsu=1
         )
-        token = Token(code='code', status=1, numero='1234')
+        token = Token(codigo='codigo', status=1, numero='1234')
         avs = Avs(
             endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
             cep='00000-000'
@@ -523,10 +523,27 @@ class TestXmlToObject(TestCase):
         self.assertTrue(isinstance(transacao.autorizacao, Autorizacao))
         self.assertTrue(isinstance(transacao.captura, Captura))
 
+    def test_autorizacao_direta_com_gerar_token(self):
+        transacao = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml3.xml')).read()
+        )
+        self.assertEqual(transacao.tid, '10069930694847D91001')
+        self.assertEqual(
+            transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
+        )
+        self.assertEqual(transacao.status, 6)
+        self.assertTrue(isinstance(transacao.pedido, Pedido))
+        self.assertTrue(isinstance(transacao.pagamento, Pagamento))
+        self.assertTrue(isinstance(transacao.autenticacao, Autenticacao))
+        self.assertTrue(isinstance(transacao.autorizacao, Autorizacao))
+        self.assertTrue(isinstance(transacao.captura, Captura))
+        self.assertTrue(isinstance(transacao.token, Token))
+
     def test_transacao_autenticada(self):
         transacao = xml_to_object(
             open(os.path.join(BASE_DIR, 'xml2.xml')).read()
         )
+        self.assertTrue(isinstance(transacao, Transacao))
         self.assertEqual(transacao.tid, '1006993069483CE61001')
         self.assertEqual(
             transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
@@ -541,3 +558,14 @@ class TestXmlToObject(TestCase):
         self.assertFalse(transacao.autenticacao)
         self.assertFalse(transacao.autorizacao)
         self.assertFalse(transacao.captura)
+
+    def test_token(self):
+        token = xml_to_object(
+            open(os.path.join(BASE_DIR, 'xml4.xml')).read()
+        )
+        self.assertTrue(isinstance(token, Token))
+        self.assertEqual(
+            token.codigo, 'HYcQ0MQ39fl8kn9OR7lFsTtxa+wNuM4lqQLUeN5SYZY='
+        )
+        self.assertEqual(token.status, 1)
+        self.assertEqual(token.numero, '211141******2104')
