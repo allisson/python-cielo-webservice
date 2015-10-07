@@ -106,7 +106,7 @@ class TestCieloRequest(TestCase):
         )
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.autorizar(transacao)
-        assert 'Mensagem' in str(excinfo.value)
+        assert '000 - Mensagem' in str(excinfo.value)
 
     @mock.patch('requests.post', capturar_mocked_response)
     def test_capturar(self):
@@ -136,7 +136,7 @@ class TestCieloRequest(TestCase):
             self.request.capturar(
                 tid='10069930694849051001', comercial=self.comercial
             )
-        assert 'Mensagem' in str(excinfo.value)
+        assert '000 - Mensagem' in str(excinfo.value)
 
     @mock.patch('requests.post', token_mocked_response)
     def test_gerar_token(self):
@@ -159,7 +159,7 @@ class TestCieloRequest(TestCase):
             self.request.gerar_token(
                 comercial=self.comercial, cartao=self.cartao
             )
-        assert 'Mensagem' in str(excinfo.value)
+        assert '000 - Mensagem' in str(excinfo.value)
 
     @mock.patch('requests.post', cancelar_mocked_response)
     def test_cancelar(self):
@@ -189,4 +189,4 @@ class TestCieloRequest(TestCase):
             self.request.cancelar(
                 tid='1006993069484E8B1001', comercial=self.comercial
             )
-        assert 'Mensagem' in str(excinfo.value)
+        assert '000 - Mensagem' in str(excinfo.value)

@@ -51,7 +51,9 @@ class CieloRequest(object):
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
-            raise CieloRequestError(object_data.mensagem)
+            raise CieloRequestError('{0} - {1}'.format(
+                object_data.codigo, object_data.mensagem)
+            )
 
         return object_data
 
@@ -72,7 +74,9 @@ class CieloRequest(object):
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
-            raise CieloRequestError(object_data.mensagem)
+            raise CieloRequestError('{0} - {1}'.format(
+                object_data.codigo, object_data.mensagem)
+            )
 
         return object_data
 
@@ -91,7 +95,9 @@ class CieloRequest(object):
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
-            raise CieloRequestError(object_data.mensagem)
+            raise CieloRequestError('{0} - {1}'.format(
+                object_data.codigo, object_data.mensagem)
+            )
 
         return object_data
 
@@ -111,6 +117,8 @@ class CieloRequest(object):
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
-            raise CieloRequestError(object_data.mensagem)
+            raise CieloRequestError('{0} - {1}'.format(
+                object_data.codigo, object_data.mensagem)
+            )
 
         return object_data
