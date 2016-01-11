@@ -3,19 +3,40 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to python-cielo-webservice's documentation!
+Documentação do python-cielo-webservice
 ===================================================
 
-Contents:
+Conteúdo:
 
 .. toctree::
    :maxdepth: 2
 
+   tutorial
 
+=================
+Autor
+=================
 
-Indices and tables
-==================
+- `Allisson Azevedo <https://github.com/allisson>`_
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+==========================
+Principais características
+==========================
+- Python: 2.7, 3.3, 3.4, 3.5.
+- Processamento de requisições http/https usando a biblioteca `requests <http://github.com/kennethreitz/requests/>`_.
+- Excelente cobertura de testes (> 80%).
+- Documentação com exemplos práticos.
+
+=================
+Links
+=================
+
+- `Github <https://github.com/allisson/python-cielo-webservice>`_
+- `Travis CI <https://travis-ci.org/allisson/python-cielo-webservice/>`_
+- `Coveralls <https://coveralls.io/github/allisson/python-cielo-webservice?branch=master>`_
+
+=================
+Referências
+=================
+
+- `Cielo: Integração Webservice 1.5 <https://developercielo.github.io/Webservice-1.5/>`_
