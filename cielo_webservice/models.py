@@ -6,6 +6,10 @@ import xmltodict
 
 class Comercial(object):
 
+    """
+    Modelo para os dados comerciais da loja.
+    """
+
     def __init__(self, numero=None, chave=None):
         self.numero = numero
         self.chave = chave
@@ -20,6 +24,10 @@ class Comercial(object):
 
 
 class Cartao(object):
+
+    """
+    Modelo para os dados do cartão.
+    """
 
     def __init__(self, numero=None, validade=None, indicador=None,
                  codigo_seguranca=None, nome_portador=None, token=None):
@@ -52,6 +60,10 @@ class Cartao(object):
 
 
 class Pedido(object):
+
+    """
+    Modelo para os dados do pedido.
+    """
 
     def __init__(self, numero=None, valor=None, moeda=986, data_hora=None,
                  descricao=None, idioma='PT', taxa_embarque=None,
@@ -94,6 +106,10 @@ class Pedido(object):
 
 class Pagamento(object):
 
+    """
+    Modelo para os dados do pagamento.
+    """
+
     def __init__(self, bandeira=None, produto=None, parcelas=None):
         self.bandeira = bandeira
         self.produto = produto
@@ -112,6 +128,10 @@ class Pagamento(object):
 
 
 class Autenticacao(object):
+
+    """
+    Modelo para os dados da autenticação.
+    """
 
     def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
                  eci=None):
@@ -140,6 +160,10 @@ class Autenticacao(object):
 
 
 class Autorizacao(object):
+
+    """
+    Modelo para os dados da autorização.
+    """
 
     def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
                  lr=None, arp=None, nsu=None):
@@ -177,6 +201,10 @@ class Autorizacao(object):
 
 class Token(object):
 
+    """
+    Modelo para os dados do token.
+    """
+
     def __init__(self, codigo=None, status=None, numero=None):
         self.codigo = codigo
         self.status = status
@@ -195,6 +223,10 @@ class Token(object):
 
 
 class Avs(object):
+
+    """
+    Modelo para os dados do avs (ADDRESS VERIFICATION SERVICE).
+    """
 
     def __init__(self, endereco=None, complemento=None, numero=None,
                  bairro=None, cep=None):
@@ -224,6 +256,10 @@ class Avs(object):
 
 class Captura(object):
 
+    """
+    Modelo para os dados da captura.
+    """
+
     def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None,
                  taxa_embarque=None):
         self.codigo = codigo
@@ -252,6 +288,10 @@ class Captura(object):
 
 class Cancelamento(object):
 
+    """
+    Modelo para os dados de cancelamento.
+    """
+
     def __init__(self, codigo=None, mensagem=None, data_hora=None, valor=None):
         self.codigo = codigo
         self.mensagem = mensagem
@@ -275,6 +315,10 @@ class Cancelamento(object):
 
 class Erro(object):
 
+    """
+    Modelo para os dados de erro do sistema.
+    """
+
     def __init__(self, codigo=None, mensagem=None):
         self.codigo = codigo
         self.mensagem = mensagem
@@ -289,6 +333,10 @@ class Erro(object):
 
 
 class Transacao(object):
+
+    """
+    Modelo para os dados de uma transação.
+    """
 
     def __init__(self, comercial=None, cartao=None, pedido=None,
                  pagamento=None, url_retorno=None, autorizar=None,

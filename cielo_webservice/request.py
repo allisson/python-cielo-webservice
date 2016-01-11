@@ -19,6 +19,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class CieloRequest(object):
 
+    """
+    Objeto que vai realizar a comunicação com a api da Cielo.
+    """
+
     def __init__(self, sandbox=False):
         self.base_url = BASE_URL
         if sandbox:
@@ -41,6 +45,9 @@ class CieloRequest(object):
         return template.render(kwargs)
 
     def autorizar(self, transacao):
+        """
+        Realiza uma autorização.
+        """
         if not isinstance(transacao, Transacao):
             raise TypeError('transacao precisa ser do tipo Transacao.')
 
@@ -59,6 +66,9 @@ class CieloRequest(object):
 
     def capturar(self, tid=None, comercial=None, valor=None,
                  taxa_embarque=None):
+        """
+        Realiza o processo de captura de uma transação.
+        """
         if not isinstance(tid, six.string_types):
             raise TypeError('tid precisa ser do tipo string.')
         if not isinstance(comercial, Comercial):
@@ -81,6 +91,9 @@ class CieloRequest(object):
         return object_data
 
     def gerar_token(self, comercial=None, cartao=None):
+        """
+        Gera o token de um cartão de crédito.
+        """
         if not isinstance(comercial, Comercial):
             raise TypeError('comercial precisa ser do tipo Comercial.')
 
@@ -102,6 +115,9 @@ class CieloRequest(object):
         return object_data
 
     def cancelar(self, tid=None, comercial=None, valor=None):
+        """
+        Cancela uma transação.
+        """
         if not isinstance(tid, six.string_types):
             raise TypeError('tid precisa ser do tipo string.')
         if not isinstance(comercial, Comercial):

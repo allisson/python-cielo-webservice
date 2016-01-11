@@ -12,6 +12,7 @@ Conteúdo:
    :maxdepth: 2
 
    tutorial
+   api
 
 =================
 Autor
