@@ -9,3 +9,5 @@ Biblioteca para trabalhar com a versão Webservice 1.5 da Cielo.
 
 .. image:: https://coveralls.io/repos/allisson/python-cielo-webservice/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/allisson/python-cielo-webservice?branch=master
+
+- `Documentação <http://python-cielo-webservice.readthedocs.org/>`_
