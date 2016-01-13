@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from unittest import TestCase, skip
+from unittest import TestCase
 from datetime import datetime
 import pytest
 import mock
@@ -130,7 +130,7 @@ class TestCieloRequest(TestCase):
             transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
         )
         self.assertEqual(
-            transacao.autorizacao.mensagem, 'Autoriza\xc3\xa7\xc3\xa3o negada'
+            transacao.autorizacao.mensagem, 'Autorização negada'
         )
 
     @mock.patch('requests.post', capturar_mocked_response)
