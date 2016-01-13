@@ -48,6 +48,11 @@ def autorizar_mocked_response(*args, **kwargs):
     return MockedResponse(data)
 
 
+def autorizar_com_rejeicao_mocked_response(*args, **kwargs):
+    data = open(os.path.join(BASE_DIR, 'xml9.xml')).read()
+    return MockedResponse(data)
+
+
 def cancelar_mocked_response(*args, **kwargs):
     data = open(os.path.join(BASE_DIR, 'xml7.xml')).read()
     return MockedResponse(data)
@@ -107,6 +112,26 @@ class TestCieloRequest(TestCase):
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.autorizar(transacao)
         assert '000 - Mensagem' in str(excinfo.value)
+
+    @mock.patch('requests.post', autorizar_com_rejeicao_mocked_response)
+    def test_autorizar_com_rejeicao(self):
+        self.pedido = Pedido(
+            numero='1234', valor=553482920, moeda=986,
+            data_hora=datetime.now().isoformat(),
+        )
+        transacao = Transacao(
+            comercial=self.comercial, cartao=self.cartao, pedido=self.pedido,
+            pagamento=self.pagamento, autorizar=3, capturar=True
+        )
+        transacao = self.request.autorizar(transacao=transacao)
+        self.assertTrue(isinstance(transacao, Transacao))
+        self.assertEqual(transacao.tid, '100699306900050E36EA')
+        self.assertEqual(
+            transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
+        )
+        self.assertEqual(
+            transacao.autorizacao.mensagem, 'Autoriza\xc3\xa7\xc3\xa3o negada'
+        )
 
     @mock.patch('requests.post', capturar_mocked_response)
     def test_capturar(self):

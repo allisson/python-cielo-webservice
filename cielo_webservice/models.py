@@ -192,7 +192,7 @@ class Autorizacao(object):
         if not isinstance(self.lr, six.integer_types):
             raise TypeError('lr precisa ser do tipo inteiro.')
 
-        if not isinstance(self.arp, six.integer_types):
+        if self.arp is not None and not isinstance(self.arp, six.integer_types):
             raise TypeError('arp precisa ser do tipo inteiro.')
 
         if not isinstance(self.nsu, six.integer_types):
@@ -518,7 +518,7 @@ def dict_to_autorizacao(data):
         data_hora=data.get('data-hora'),
         valor=int(data.get('valor')),
         lr=int(data.get('lr')),
-        arp=int(data.get('arp')),
+        arp=int(data.get('arp')) if data.get('arp') else None,
         nsu=int(data.get('nsu')),
     )
     return autorizacao
