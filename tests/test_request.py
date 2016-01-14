@@ -86,7 +86,7 @@ class TestCieloRequest(TestCase):
             self.request.render_template('notfound.xml', id=str(uuid.uuid4()))
         assert 'notfound.xml' in str(excinfo.value)
 
-    @mock.patch('requests.post', autorizar_mocked_response)
+    @mock.patch('requests.Session.post', autorizar_mocked_response)
     def test_autorizar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.autorizar('transacao')
@@ -103,7 +103,7 @@ class TestCieloRequest(TestCase):
             transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
         )
 
-    @mock.patch('requests.post', erro_mocked_response)
+    @mock.patch('requests.Session.post', erro_mocked_response)
     def test_autorizar_com_erro(self):
         transacao = Transacao(
             comercial=self.comercial, cartao=self.cartao, pedido=self.pedido,
@@ -113,7 +113,7 @@ class TestCieloRequest(TestCase):
             self.request.autorizar(transacao)
         assert '000 - Mensagem' in str(excinfo.value)
 
-    @mock.patch('requests.post', autorizar_com_rejeicao_mocked_response)
+    @mock.patch('requests.Session.post', autorizar_com_rejeicao_mocked_response)
     def test_autorizar_com_rejeicao(self):
         self.pedido = Pedido(
             numero='1234', valor=553482920, moeda=986,
@@ -133,7 +133,7 @@ class TestCieloRequest(TestCase):
             transacao.autorizacao.mensagem, 'Autorização negada'
         )
 
-    @mock.patch('requests.post', capturar_mocked_response)
+    @mock.patch('requests.Session.post', capturar_mocked_response)
     def test_capturar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.capturar(tid=1, comercial=self.comercial)
@@ -155,7 +155,7 @@ class TestCieloRequest(TestCase):
         self.assertTrue(isinstance(transacao, Transacao))
         self.assertTrue(isinstance(transacao.captura, Captura))
 
-    @mock.patch('requests.post', erro_mocked_response)
+    @mock.patch('requests.Session.post', erro_mocked_response)
     def test_capturar_com_erro(self):
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.capturar(
@@ -163,7 +163,7 @@ class TestCieloRequest(TestCase):
             )
         assert '000 - Mensagem' in str(excinfo.value)
 
-    @mock.patch('requests.post', token_mocked_response)
+    @mock.patch('requests.Session.post', token_mocked_response)
     def test_gerar_token(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.gerar_token(comercial=1, cartao=self.cartao)
@@ -178,7 +178,7 @@ class TestCieloRequest(TestCase):
         )
         self.assertTrue(isinstance(token, Token))
 
-    @mock.patch('requests.post', erro_mocked_response)
+    @mock.patch('requests.Session.post', erro_mocked_response)
     def test_gerar_token_com_erro(self):
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.gerar_token(
@@ -186,7 +186,7 @@ class TestCieloRequest(TestCase):
             )
         assert '000 - Mensagem' in str(excinfo.value)
 
-    @mock.patch('requests.post', cancelar_mocked_response)
+    @mock.patch('requests.Session.post', cancelar_mocked_response)
     def test_cancelar(self):
         with pytest.raises(TypeError) as excinfo:
             self.request.cancelar(tid=1, comercial=self.comercial)
@@ -208,7 +208,7 @@ class TestCieloRequest(TestCase):
         self.assertTrue(isinstance(transacao, Transacao))
         self.assertTrue(isinstance(transacao.cancelamento, Cancelamento))
 
-    @mock.patch('requests.post', erro_mocked_response)
+    @mock.patch('requests.Session.post', erro_mocked_response)
     def test_cancelar_com_erro(self):
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.cancelar(

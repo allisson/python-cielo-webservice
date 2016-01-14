@@ -10,6 +10,7 @@ from cielo_webservice.models import (
     Cartao, Transacao, Comercial, Erro, xml_to_object
 )
 from cielo_webservice.exceptions import CieloRequestError
+from cielo_webservice.adapter import TLSv1HttpAdapter
 
 
 BASE_URL = 'https://ecommerce.cielo.com.br/servicos/ecommwsec.do'
@@ -28,6 +29,8 @@ class CieloRequest(object):
         if sandbox:
             self.base_url = SANDBOX_BASE_URL
         self.template_env = self.create_template_env()
+        self.session = requests.Session()
+        self.session.mount('https://', TLSv1HttpAdapter())
 
     def create_template_env(self):
         template_dirs = []
@@ -54,7 +57,7 @@ class CieloRequest(object):
         xml = self.render_template(
             'transacao.xml', id=str(uuid.uuid4()), transacao=transacao
         )
-        response = requests.post(self.base_url, data={'mensagem': xml})
+        response = self.session.post(self.base_url, data={'mensagem': xml})
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
@@ -80,7 +83,7 @@ class CieloRequest(object):
             'captura.xml', id=str(uuid.uuid4()), tid=tid, comercial=comercial,
             valor=valor, taxa_embarque=taxa_embarque
         )
-        response = requests.post(self.base_url, data={'mensagem': xml})
+        response = self.session.post(self.base_url, data={'mensagem': xml})
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
@@ -104,7 +107,7 @@ class CieloRequest(object):
             'token.xml', id=str(uuid.uuid4()), comercial=comercial,
             cartao=cartao
         )
-        response = requests.post(self.base_url, data={'mensagem': xml})
+        response = self.session.post(self.base_url, data={'mensagem': xml})
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):
@@ -129,7 +132,7 @@ class CieloRequest(object):
             'cancelamento.xml', id=str(uuid.uuid4()), tid=tid,
             comercial=comercial, valor=valor
         )
-        response = requests.post(self.base_url, data={'mensagem': xml})
+        response = self.session.post(self.base_url, data={'mensagem': xml})
         object_data = xml_to_object(response.text)
 
         if isinstance(object_data, Erro):

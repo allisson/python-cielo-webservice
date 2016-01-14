@@ -3,7 +3,7 @@ from setuptools import setup, find_packages, Command
 import cielo_webservice
 
 requires = [
-    'requests',
+    'requests>=2.9.1',
     'jinja2',
     'six',
     'xmltodict',
