@@ -24,6 +24,16 @@ class TestComercial(TestCase):
             Comercial(numero=1234, chave=1234)
         assert 'chave precisa ser do tipo string.' in str(excinfo.value)
 
+    def test_repr(self):
+        comercial = Comercial(
+            numero=1006993069,
+            chave='25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3'
+        )
+        self.assertEqual(
+            repr(comercial),
+            '<Comercial(numero=1006993069, chave=25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3)>'
+        )
+
 
 class TestCartao(TestCase):
 
@@ -66,6 +76,16 @@ class TestCartao(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Cartao(token=123)
         assert 'token precisa ser do tipo string.' in str(excinfo.value)
+
+    def test_repr(self):
+        cartao = Cartao(
+            numero=4012001037141112, validade=201805, indicador=1,
+            codigo_seguranca=123, nome_portador='Fulano Silva'
+        )
+        self.assertEqual(
+            repr(cartao),
+            '<Cartao(numero=4012001037141112, validade=201805, indicador=1, codigo_seguranca=123, nome_portador=Fulano Silva, token=None)>'
+        )
 
 
 class TestPedido(TestCase):
@@ -127,6 +147,16 @@ class TestPedido(TestCase):
             )
         assert 'soft_descriptor precisa ser do tipo string.' in str(excinfo.value)
 
+    def test_repr(self):
+        pedido = Pedido(
+            numero='1234', valor=10000, moeda=986,
+            data_hora='2016-03-05T03:30:43.982543'
+        )
+        self.assertEqual(
+            repr(pedido),
+            '<Pedido(numero=1234, valor=10000, moeda=986, data_hora=2016-03-05T03:30:43.982543, descricao=None, idioma=PT, taxa_embarque=None, soft_descriptor=None)>'
+        )
+
 
 class TestPagamento(TestCase):
 
@@ -142,6 +172,13 @@ class TestPagamento(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Pagamento(bandeira='visa', produto='1', parcelas='1')
         assert 'parcelas precisa ser do tipo inteiro.' in str(excinfo.value)
+
+    def test_repr(self):
+        pagamento = Pagamento(bandeira='visa', produto='1', parcelas=1)
+        self.assertEqual(
+            repr(pagamento),
+            '<Pagamento(bandeira=visa, produto=1, parcelas=1)>'
+        )
 
 
 class TestAutenticacao(TestCase):
@@ -181,6 +218,16 @@ class TestAutenticacao(TestCase):
                 valor=10000, eci='7'
             )
         assert 'eci precisa ser do tipo inteiro.' in str(excinfo.value)
+
+    def test_repr(self):
+        autenticacao = Autenticacao(
+            codigo=6, mensagem='Transacao sem autenticacao',
+            data_hora='2016-03-05T00:03:46.158-03:00', valor=10000, eci=7
+        )
+        self.assertEqual(
+            repr(autenticacao),
+            '<Autenticacao(codigo=6, mensagem=Transacao sem autenticacao, data_hora=2016-03-05T00:03:46.158-03:00, valor=10000, eci=7)>'
+        )
 
 
 class TestAutorizacao(TestCase):
@@ -235,6 +282,17 @@ class TestAutorizacao(TestCase):
             )
         assert 'nsu precisa ser do tipo inteiro.' in str(excinfo.value)
 
+    def test_repr(self):
+        autorizacao = Autorizacao(
+            codigo=6, mensagem='Transacao autorizada',
+            data_hora='2016-03-05T00:03:46.161-03:00', valor=10000, lr=00,
+            arp=123456, nsu=36318
+        )
+        self.assertEqual(
+            repr(autorizacao),
+            '<Autorizacao(codigo=6, mensagem=Transacao autorizada, data_hora=2016-03-05T00:03:46.161-03:00, valor=10000, lr=0, arp=123456, nsu=36318)>'
+        )
+
 
 class TestToken(TestCase):
 
@@ -250,6 +308,13 @@ class TestToken(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Token(codigo='code', status=1, numero=1234)
         assert 'numero precisa ser do tipo string.' in str(excinfo.value)
+
+    def test_repr(self):
+        token = Token(codigo='code', status=1, numero='1234')
+        self.assertEqual(
+            repr(token),
+            '<Token(codigo=code, status=1, numero=1234)>'
+        )
 
 
 class TestAvs(TestCase):
@@ -290,6 +355,16 @@ class TestAvs(TestCase):
             )
         assert 'cep precisa ser do tipo string.' in str(excinfo.value)
 
+    def test_repr(self):
+        avs = Avs(
+            endereco='Rua 1', complemento='', numero=1, bairro='Bairro',
+            cep='00000000'
+        )
+        self.assertEqual(
+            repr(avs),
+            '<Avs(endereco=Rua 1, complemento=, numero=1, bairro=Bairro, cep=00000000)>'
+        )
+
 
 class TestCaptura(TestCase):
 
@@ -329,6 +404,16 @@ class TestCaptura(TestCase):
             )
         assert 'taxa_embarque precisa ser do tipo inteiro.' in str(excinfo.value)
 
+    def test_repr(self):
+        captura = Captura(
+            codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+            valor=10000, taxa_embarque=0
+        )
+        self.assertEqual(
+            repr(captura),
+            '<Captura(codigo=1, mensagem=mensagem, data_hora=2011-12-07T11:43:37, valor=10000, taxa_embarque=0)>'
+        )
+
 
 class TestCancelamento(TestCase):
 
@@ -360,6 +445,16 @@ class TestCancelamento(TestCase):
             )
         assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
+    def test_repr(self):
+        cancelamento = Cancelamento(
+            codigo=1, mensagem='mensagem', data_hora='2011-12-07T11:43:37',
+            valor=10000
+        )
+        self.assertEqual(
+            repr(cancelamento),
+            '<Cancelamento(codigo=1, mensagem=mensagem, data_hora=2011-12-07T11:43:37, valor=10000)>'
+        )
+
 
 class TestErro(TestCase):
 
@@ -371,6 +466,13 @@ class TestErro(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Erro(codigo='001', mensagem=1)
         assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
+
+    def test_repr(self):
+        erro = Erro(codigo='001', mensagem='erro')
+        self.assertEqual(
+            repr(erro),
+            '<Erro(codigo=001, mensagem=erro)>'
+        )
 
 
 class TestTransacao(TestCase):
@@ -553,6 +655,28 @@ class TestTransacao(TestCase):
                 cancelamento=1
             )
         assert 'cancelamento precisa ser do tipo Cancelamento.' in str(excinfo.value)
+
+    def test_repr(self):
+        comercial = Comercial(
+            numero=1006993069, chave='25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3'
+        )
+        cartao = Cartao(
+            numero=4012001037141112, validade=201805, indicador=1,
+            codigo_seguranca=123, nome_portador='Fulano Silva'
+        )
+        pedido = Pedido(
+            numero='1234', valor=10000, moeda=986,
+            data_hora='2016-03-05T05:01:30.738727'
+        )
+        pagamento = Pagamento(bandeira='visa', produto='1', parcelas=1)
+        transacao = Transacao(
+            comercial=comercial, cartao=cartao, pedido=pedido,
+            pagamento=pagamento, autorizar=3, capturar=True
+        )
+        self.assertEqual(
+            repr(transacao),
+            '<Transacao(comercial=<Comercial(numero=1006993069, chave=25fbb99741c739dd84d7b06ec78c9bac718838630f30b112d033ce2e621b34f3)>, cartao=<Cartao(numero=4012001037141112, validade=201805, indicador=1, codigo_seguranca=123, nome_portador=Fulano Silva, token=None)>, pedido=<Pedido(numero=1234, valor=10000, moeda=986, data_hora=2016-03-05T05:01:30.738727, descricao=None, idioma=PT, taxa_embarque=None, soft_descriptor=None)>, pagamento=<Pagamento(bandeira=visa, produto=1, parcelas=1)>, url_retorno=None, autorizar=3, capturar=True, campo_livre=None, bin=None, gerar_token=None, avs=None, autenticacao=None, autorizacao=None, captura=None, token=None, cancelamento=None, tid=None, pan=None, status=None, url_autenticacao=None)>'
+        )
 
 
 class TestXmlToObject(TestCase):

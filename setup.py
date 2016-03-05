@@ -7,6 +7,7 @@ requires = [
     'jinja2',
     'six',
     'xmltodict',
+    'Unidecode',
     'mock',
 ]
 

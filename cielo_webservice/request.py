@@ -141,3 +141,26 @@ class CieloRequest(object):
             )
 
         return object_data
+
+    def consultar(self, tid=None, comercial=None):
+        """
+        Retorna os dados de uma transação.
+        """
+        if not isinstance(tid, six.string_types):
+            raise TypeError('tid precisa ser do tipo string.')
+        if not isinstance(comercial, Comercial):
+            raise TypeError('comercial precisa ser do tipo Comercial.')
+
+        xml = self.render_template(
+            'consulta.xml', id=str(uuid.uuid4()), tid=tid,
+            comercial=comercial
+        )
+        response = self.session.post(self.base_url, data={'mensagem': xml})
+        object_data = xml_to_object(response.text)
+
+        if isinstance(object_data, Erro):
+            raise CieloRequestError('{0} - {1}'.format(
+                object_data.codigo, object_data.mensagem)
+            )
+
+        return object_data

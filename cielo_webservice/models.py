@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 import six
 import xmltodict
+from unidecode import unidecode
 
 
 class Comercial(object):
@@ -21,6 +22,11 @@ class Comercial(object):
 
         if not isinstance(self.chave, six.string_types):
             raise TypeError('chave precisa ser do tipo string.')
+
+    def __repr__(self):
+        return '<Comercial(numero={}, chave={})>'.format(
+            self.numero, self.chave
+        )
 
 
 class Cartao(object):
@@ -57,6 +63,12 @@ class Cartao(object):
 
         if self.token is not None and not isinstance(self.token, six.string_types):
             raise TypeError('token precisa ser do tipo string.')
+
+    def __repr__(self):
+        return '<Cartao(numero={}, validade={}, indicador={}, codigo_seguranca={}, nome_portador={}, token={})>'.format(
+            self.numero, self.validade, self.indicador, self.codigo_seguranca,
+            self.nome_portador, self.token
+        )
 
 
 class Pedido(object):
@@ -103,6 +115,13 @@ class Pedido(object):
         if self.soft_descriptor is not None and not isinstance(self.soft_descriptor, six.string_types):
             raise TypeError('soft_descriptor precisa ser do tipo string.')
 
+    def __repr__(self):
+        return '<Pedido(numero={}, valor={}, moeda={}, data_hora={}, descricao={}, idioma={}, taxa_embarque={}, soft_descriptor={})>'.format(
+            self.numero, self.valor, self.moeda, self.data_hora,
+            self.descricao, self.idioma, self.taxa_embarque,
+            self.soft_descriptor
+        )
+
 
 class Pagamento(object):
 
@@ -125,6 +144,11 @@ class Pagamento(object):
 
         if not isinstance(self.parcelas, six.integer_types):
             raise TypeError('parcelas precisa ser do tipo inteiro.')
+
+    def __repr__(self):
+        return '<Pagamento(bandeira={}, produto={}, parcelas={})>'.format(
+            self.bandeira, self.produto, self.parcelas
+        )
 
 
 class Autenticacao(object):
@@ -157,6 +181,11 @@ class Autenticacao(object):
 
         if not isinstance(self.eci, six.integer_types):
             raise TypeError('eci precisa ser do tipo inteiro.')
+
+    def __repr__(self):
+        return '<Autenticacao(codigo={}, mensagem={}, data_hora={}, valor={}, eci={})>'.format(
+            self.codigo, self.mensagem, self.data_hora, self.valor, self.eci
+        )
 
 
 class Autorizacao(object):
@@ -198,6 +227,12 @@ class Autorizacao(object):
         if not isinstance(self.nsu, six.integer_types):
             raise TypeError('nsu precisa ser do tipo inteiro.')
 
+    def __repr__(self):
+        return '<Autorizacao(codigo={}, mensagem={}, data_hora={}, valor={}, lr={}, arp={}, nsu={})>'.format(
+            self.codigo, self.mensagem, self.data_hora, self.valor, self.lr,
+            self.arp, self.nsu
+        )
+
 
 class Token(object):
 
@@ -220,6 +255,11 @@ class Token(object):
 
         if not isinstance(self.numero, six.string_types):
             raise TypeError('numero precisa ser do tipo string.')
+
+    def __repr__(self):
+        return '<Token(codigo={}, status={}, numero={})>'.format(
+            self.codigo, self.status, self.numero
+        )
 
 
 class Avs(object):
@@ -253,6 +293,11 @@ class Avs(object):
         if not isinstance(self.cep, six.string_types):
             raise TypeError('cep precisa ser do tipo string.')
 
+    def __repr__(self):
+        return '<Avs(endereco={}, complemento={}, numero={}, bairro={}, cep={})>'.format(
+            self.endereco, self.complemento, self.numero, self.bairro, self.cep
+        )
+
 
 class Captura(object):
 
@@ -285,6 +330,12 @@ class Captura(object):
         if self.taxa_embarque is not None and not isinstance(self.taxa_embarque, six.integer_types):
             raise TypeError('taxa_embarque precisa ser do tipo inteiro.')
 
+    def __repr__(self):
+        return '<Captura(codigo={}, mensagem={}, data_hora={}, valor={}, taxa_embarque={})>'.format(
+            self.codigo, self.mensagem, self.data_hora, self.valor,
+            self.taxa_embarque
+        )
+
 
 class Cancelamento(object):
 
@@ -312,6 +363,11 @@ class Cancelamento(object):
         if not isinstance(self.valor, six.integer_types):
             raise TypeError('valor precisa ser do tipo inteiro.')
 
+    def __repr__(self):
+        return '<Cancelamento(codigo={}, mensagem={}, data_hora={}, valor={})>'.format(
+            self.codigo, self.mensagem, self.data_hora, self.valor
+        )
+
 
 class Erro(object):
 
@@ -330,6 +386,11 @@ class Erro(object):
 
         if not isinstance(self.mensagem, six.string_types):
             raise TypeError('mensagem precisa ser do tipo string.')
+
+    def __repr__(self):
+        return '<Erro(codigo={}, mensagem={})>'.format(
+            self.codigo, self.mensagem
+        )
 
 
 class Transacao(object):
@@ -427,6 +488,15 @@ class Transacao(object):
         if self.url_autenticacao is not None and not isinstance(self.url_autenticacao, six.string_types):
             raise TypeError('url_autenticacao precisa ser do tipo string.')
 
+    def __repr__(self):
+        return '<Transacao(comercial={}, cartao={}, pedido={}, pagamento={}, url_retorno={}, autorizar={}, capturar={}, campo_livre={}, bin={}, gerar_token={}, avs={}, autenticacao={}, autorizacao={}, captura={}, token={}, cancelamento={}, tid={}, pan={}, status={}, url_autenticacao={})>'.format(
+            self.comercial, self.cartao, self.pedido, self.pagamento,
+            self.url_retorno, self.autorizar, self.capturar, self.campo_livre,
+            self.bin, self.gerar_token, self.avs, self.autenticacao,
+            self.autorizacao, self.captura, self.token, self.cancelamento,
+            self.tid, self.pan, self.status, self.url_autenticacao
+        )
+
 
 def xml_to_object(xml):
     data = xmltodict.parse(xml)
@@ -503,7 +573,7 @@ def dict_to_pagamento(data):
 def dict_to_autenticacao(data):
     autenticacao = Autenticacao(
         codigo=int(data.get('codigo')),
-        mensagem=data.get('mensagem'),
+        mensagem=unidecode(data.get('mensagem')),
         data_hora=data.get('data-hora'),
         valor=int(data.get('valor')),
         eci=int(data.get('eci')),
@@ -514,7 +584,7 @@ def dict_to_autenticacao(data):
 def dict_to_autorizacao(data):
     autorizacao = Autorizacao(
         codigo=int(data.get('codigo')),
-        mensagem=data.get('mensagem'),
+        mensagem=unidecode(data.get('mensagem')),
         data_hora=data.get('data-hora'),
         valor=int(data.get('valor')),
         lr=int(data.get('lr')),
@@ -528,7 +598,7 @@ def dict_to_captura(data):
     taxa_embarque = int(data.get('taxa-embarque')) if data.get('taxa-embarque') else None
     captura = Captura(
         codigo=int(data.get('codigo')),
-        mensagem=data.get('mensagem'),
+        mensagem=unidecode(data.get('mensagem')),
         data_hora=data.get('data-hora'),
         valor=int(data.get('valor')),
         taxa_embarque=taxa_embarque,
@@ -549,7 +619,7 @@ def dict_to_cancelamento(data):
     data = data['cancelamento']
     cancelamento = Cancelamento(
         codigo=int(data.get('codigo')),
-        mensagem=data.get('mensagem'),
+        mensagem=unidecode(data.get('mensagem')),
         data_hora=data.get('data-hora'),
         valor=int(data.get('valor'))
     )

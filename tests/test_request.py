@@ -58,6 +58,11 @@ def cancelar_mocked_response(*args, **kwargs):
     return MockedResponse(data)
 
 
+def consultar_mocked_response(*args, **kwargs):
+    data = open(os.path.join(BASE_DIR, 'xml10.xml')).read()
+    return MockedResponse(data)
+
+
 def erro_mocked_response(*args, **kwargs):
     data = open(os.path.join(BASE_DIR, 'xml8.xml')).read()
     return MockedResponse(data)
@@ -130,7 +135,7 @@ class TestCieloRequest(TestCase):
             transacao.pan, 'IqVz7P9zaIgTYdU41HaW/OB/d7Idwttqwb2vaTt8MT0='
         )
         self.assertEqual(
-            transacao.autorizacao.mensagem, 'Autorização negada'
+            transacao.autorizacao.mensagem, 'Autorizacao negada'
         )
 
     @mock.patch('requests.Session.post', capturar_mocked_response)
@@ -212,6 +217,30 @@ class TestCieloRequest(TestCase):
     def test_cancelar_com_erro(self):
         with pytest.raises(CieloRequestError) as excinfo:
             self.request.cancelar(
+                tid='1006993069484E8B1001', comercial=self.comercial
+            )
+        assert '000 - Mensagem' in str(excinfo.value)
+
+    @mock.patch('requests.Session.post', consultar_mocked_response)
+    def test_consultar(self):
+        with pytest.raises(TypeError) as excinfo:
+            self.request.consultar(tid=1, comercial=self.comercial)
+        assert 'tid precisa ser do tipo string.' in str(excinfo.value)
+
+        with pytest.raises(TypeError) as excinfo:
+            self.request.consultar(tid='tid', comercial=1)
+        assert 'comercial precisa ser do tipo Comercial.' in str(excinfo.value)
+
+        transacao = self.request.consultar(
+            tid='10069930690005C1B5EA', comercial=self.comercial
+        )
+        self.assertTrue(isinstance(transacao, Transacao))
+        self.assertEqual(transacao.tid, '10069930690005C1B5EA')
+
+    @mock.patch('requests.Session.post', erro_mocked_response)
+    def test_consultar_com_erro(self):
+        with pytest.raises(CieloRequestError) as excinfo:
+            self.request.consultar(
                 tid='1006993069484E8B1001', comercial=self.comercial
             )
         assert '000 - Mensagem' in str(excinfo.value)
