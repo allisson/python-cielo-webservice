@@ -236,61 +236,61 @@ class TestAutorizacao(TestCase):
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo='1', mensagem='msg', data_hora='2011-12-07T11:43:37',
-                valor=10000, lr=1, arp=1, nsu=1
+                valor=10000, lr="01", arp=1, nsu=1
             )
         assert 'codigo precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem=1, data_hora='2011-12-07T11:43:37',
-                valor=10000, lr=1, arp=1, nsu=1
+                valor=10000, lr="01", arp=1, nsu=1
             )
         assert 'mensagem precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora=201112,
-                valor=10000, lr=1, arp=1, nsu=1
+                valor=10000, lr="01", arp=1, nsu=1
             )
         assert 'data_hora precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
-                valor='10000', lr=1, arp=1, nsu=1
+                valor='10000', lr="01", arp=1, nsu=1
             )
         assert 'valor precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
-                valor=10000, lr='1', arp=1, nsu=1
+                valor=10000, lr=1, arp=1, nsu=1
             )
-        assert 'lr precisa ser do tipo inteiro.' in str(excinfo.value)
+        assert 'lr precisa ser do tipo string.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
-                valor=10000, lr=1, arp='1', nsu=1
+                valor=10000, lr="01", arp='1', nsu=1
             )
         assert 'arp precisa ser do tipo inteiro.' in str(excinfo.value)
 
         with pytest.raises(TypeError) as excinfo:
             Autorizacao(
                 codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
-                valor=10000, lr=1, arp=1, nsu='1'
+                valor=10000, lr="01", arp=1, nsu='1'
             )
         assert 'nsu precisa ser do tipo inteiro.' in str(excinfo.value)
 
     def test_repr(self):
         autorizacao = Autorizacao(
             codigo=6, mensagem='Transacao autorizada',
-            data_hora='2016-03-05T00:03:46.161-03:00', valor=10000, lr=00,
+            data_hora='2016-03-05T00:03:46.161-03:00', valor=10000, lr="00",
             arp=123456, nsu=36318
         )
         self.assertEqual(
             repr(autorizacao),
-            '<Autorizacao(codigo=6, mensagem=Transacao autorizada, data_hora=2016-03-05T00:03:46.161-03:00, valor=10000, lr=0, arp=123456, nsu=36318)>'
+            '<Autorizacao(codigo=6, mensagem=Transacao autorizada, data_hora=2016-03-05T00:03:46.161-03:00, valor=10000, lr=00, arp=123456, nsu=36318)>'
         )
 
 
@@ -494,7 +494,7 @@ class TestTransacao(TestCase):
         )
         autorizacao = Autorizacao(
             codigo=1, mensagem='msg', data_hora='2011-12-07T11:43:37',
-            valor=10000, lr=1, arp=1, nsu=1
+            valor=10000, lr="01", arp=1, nsu=1
         )
         token = Token(codigo='codigo', status=1, numero='1234')
         avs = Avs(
